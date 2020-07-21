@@ -1,0 +1,14 @@
+C:\Users\htmm1\source\repos\NFMProject\NFMProject\bin\Debug\NFMProject.exe.config
+C:\Users\htmm1\source\repos\NFMProject\NFMProject\bin\Debug\NFMProject.exe
+C:\Users\htmm1\source\repos\NFMProject\NFMProject\bin\Debug\NFMProject.pdb
+C:\Users\htmm1\source\repos\NFMProject\NFMProject\obj\Debug\NFMProject.csprojAssemblyReference.cache
+C:\Users\htmm1\source\repos\NFMProject\NFMProject\obj\Debug\NFMProject.Properties.Resources.resources
+C:\Users\htmm1\source\repos\NFMProject\NFMProject\obj\Debug\NFMProject.csproj.GenerateResource.cache
+C:\Users\htmm1\source\repos\NFMProject\NFMProject\obj\Debug\NFMProject.exe
+C:\Users\htmm1\source\repos\NFMProject\NFMProject\obj\Debug\NFMProject.pdb
+C:\Users\htmm1\source\repos\NFMProject\NFMProject\bin\Debug\Microsoft.Toolkit.Forms.UI.Controls.WebView.dll
+C:\Users\htmm1\source\repos\NFMProject\NFMProject\bin\Debug\Microsoft.Toolkit.Forms.UI.Controls.WebView.pdb
+C:\Users\htmm1\source\repos\NFMProject\NFMProject\obj\Debug\NFMProject.csproj.CopyComplete
+C:\Users\htmm1\source\repos\NFMProject\NFMProject\bin\Debug\Newtonsoft.Json.dll
+C:\Users\htmm1\source\repos\NFMProject\NFMProject\obj\Debug\NFMProject.LoginWebViewForm.resources
+C:\Users\htmm1\source\repos\NFMProject\NFMProject\obj\Debug\NFMProject.MainForm.resources
