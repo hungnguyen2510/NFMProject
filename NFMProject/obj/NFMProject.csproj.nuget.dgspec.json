@@ -1,21 +1,21 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\htmm1\\source\\repos\\NFMProject\\NFMProject\\NFMProject.csproj": {}
+    "C:\\Users\\Hung Mer\\Source\\Repos\\NFMProject\\NFMProject\\NFMProject.csproj": {}
   },
   "projects": {
-    "C:\\Users\\htmm1\\source\\repos\\NFMProject\\NFMProject\\NFMProject.csproj": {
+    "C:\\Users\\Hung Mer\\Source\\Repos\\NFMProject\\NFMProject\\NFMProject.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\htmm1\\source\\repos\\NFMProject\\NFMProject\\NFMProject.csproj",
+        "projectUniqueName": "C:\\Users\\Hung Mer\\Source\\Repos\\NFMProject\\NFMProject\\NFMProject.csproj",
         "projectName": "NFMProject",
-        "projectPath": "C:\\Users\\htmm1\\source\\repos\\NFMProject\\NFMProject\\NFMProject.csproj",
-        "packagesPath": "C:\\Users\\htmm1\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\htmm1\\source\\repos\\NFMProject\\NFMProject\\obj\\",
+        "projectPath": "C:\\Users\\Hung Mer\\Source\\Repos\\NFMProject\\NFMProject\\NFMProject.csproj",
+        "packagesPath": "C:\\Users\\Hung Mer\\.nuget\\packages\\",
+        "outputPath": "C:\\Users\\Hung Mer\\Source\\Repos\\NFMProject\\NFMProject\\obj\\",
         "projectStyle": "PackageReference",
         "skipContentFileWrite": true,
         "configFilePaths": [
-          "C:\\Users\\htmm1\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Users\\Hung Mer\\AppData\\Roaming\\NuGet\\NuGet.Config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
         ],
         "originalTargetFrameworks": [
@@ -23,7 +23,6 @@
         ],
         "sources": {
           "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
-          "C:\\Users\\Public\\Documents\\Infragistics\\NuGet\\": {},
           "https://api.nuget.org/v3/index.json": {}
         },
         "frameworks": {

@@ -12,3 +12,23 @@ C:\Users\htmm1\source\repos\NFMProject\NFMProject\obj\Debug\NFMProject.csproj.Co
 C:\Users\htmm1\source\repos\NFMProject\NFMProject\bin\Debug\Newtonsoft.Json.dll
 C:\Users\htmm1\source\repos\NFMProject\NFMProject\obj\Debug\NFMProject.LoginWebViewForm.resources
 C:\Users\htmm1\source\repos\NFMProject\NFMProject\obj\Debug\NFMProject.MainForm.resources
+C:\Users\Hung Mer\Source\Repos\NFMProject\NFMProject\bin\Debug\NFMProject.exe.config
+C:\Users\Hung Mer\Source\Repos\NFMProject\NFMProject\bin\Debug\NFMProject.exe
+C:\Users\Hung Mer\Source\Repos\NFMProject\NFMProject\bin\Debug\NFMProject.pdb
+C:\Users\Hung Mer\Source\Repos\NFMProject\NFMProject\bin\Debug\Microsoft.Toolkit.Forms.UI.Controls.WebView.dll
+C:\Users\Hung Mer\Source\Repos\NFMProject\NFMProject\bin\Debug\Microsoft.Toolkit.Forms.UI.Controls.WebView.pdb
+C:\Users\Hung Mer\Source\Repos\NFMProject\NFMProject\bin\Debug\Newtonsoft.Json.dll
+C:\Users\Hung Mer\Source\Repos\NFMProject\NFMProject\obj\Debug\NFMProject.csprojAssemblyReference.cache
+C:\Users\Hung Mer\Source\Repos\NFMProject\NFMProject\obj\Debug\NFMProject.LoginWebViewForm.resources
+C:\Users\Hung Mer\Source\Repos\NFMProject\NFMProject\obj\Debug\NFMProject.Properties.Resources.resources
+C:\Users\Hung Mer\Source\Repos\NFMProject\NFMProject\obj\Debug\NFMProject.csproj.GenerateResource.cache
+C:\Users\Hung Mer\Source\Repos\NFMProject\NFMProject\obj\Debug\NFMProject.csproj.CoreCompileInputs.cache
+C:\Users\Hung Mer\Source\Repos\NFMProject\NFMProject\obj\Debug\NFMProject.csproj.CopyComplete
+C:\Users\Hung Mer\Source\Repos\NFMProject\NFMProject\obj\Debug\NFMProject.exe
+C:\Users\Hung Mer\Source\Repos\NFMProject\NFMProject\obj\Debug\NFMProject.pdb
+C:\Users\Hung Mer\Source\Repos\NFMProject\NFMProject\obj\Debug\NFMProject.MainForm.resources
+C:\Users\Hung Mer\Source\Repos\NFMProject\NFMProject\bin\Debug\NFMProject.exe.manifest
+C:\Users\Hung Mer\Source\Repos\NFMProject\NFMProject\bin\Debug\NFMProject.application
+C:\Users\Hung Mer\Source\Repos\NFMProject\NFMProject\obj\Debug\NFMProject.TrustInfo.xml
+C:\Users\Hung Mer\Source\Repos\NFMProject\NFMProject\obj\Debug\NFMProject.exe.manifest
+C:\Users\Hung Mer\Source\Repos\NFMProject\NFMProject\obj\Debug\NFMProject.application

@@ -1,14 +1,18 @@
 ﻿namespace NFMProject
 {
     using System;
-    using System.Collections.Generic;
     using System.Diagnostics;
-    using System.Runtime.InteropServices;
-    using System.Security.Permissions;
+    using System.IO;
     using System.Windows.Forms;
+    using Newtonsoft.Json;
     using Newtonsoft.Json.Linq;
+    using static Config;
     public partial class LoginWebViewForm : Form
     {
+        public static string token;
+        public static string pathWatchingConfig = "";
+        public static string tokenConfig = "";
+        string pathConfig = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) + "\\NFM\\Config\\";
         public LoginWebViewForm()
         {
             InitializeComponent();
@@ -18,16 +22,13 @@
         {
             try
             {
-                string token = await webView1.InvokeScriptAsync("sendscript");
-                dynamic json = JObject.Parse(token);
-                if (token != "")
+                string stringReturn = await webView1.InvokeScriptAsync("sendscript");
+                token = JObject.Parse(stringReturn)["token"].ToString();
+                if (stringReturn != "")
                 {
-
                     MainForm fm = new MainForm();
                     fm.Show();
                     this.Hide();
-
-
                 }
             }
             catch (Exception ex)
@@ -35,7 +36,57 @@
                 MessageBox.Show(ex.Message);
             }
         }
+        public JObject ReadFileJSON(string path)
+        {
+            JObject o1 = JObject.Parse(File.ReadAllText(path));
+            JObject o2 = new JObject();
 
+            using (StreamReader file = File.OpenText(path))
+            using (JsonTextReader reader = new JsonTextReader(file))
+            {
+                o2 = (JObject)JToken.ReadFrom(reader);
+            }
+            return o2;
+        }
 
+        private void btnLoadConfig_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                DirectoryInfo d = new DirectoryInfo(pathConfig);
+                FileInfo[] Files = d.GetFiles("*.json");
+                string strConfig = "";
+                foreach (FileInfo file in Files)
+                {
+                    strConfig = file.Name;
+                }
+                if (strConfig != "")
+                {
+                    string pathFile = pathConfig + strConfig;
+                    JObject ob = ReadFileJSON(pathFile);
+                    Config cf = JsonConvert.DeserializeObject<Config>(ob.ToString());
+                    if (cf.token != "")
+                    {
+                        tokenConfig = cf.token;
+                        pathWatchingConfig = cf.pathWatching;
+                        MainForm fm = new MainForm();
+                        fm.Show();
+                        this.Hide();
+                    }
+                }
+                else
+                {
+                    MessageBox.Show("Khong co config");
+                }
+            }
+            catch (Exception ex) {
+                MessageBox.Show(ex.Message);
+            }
+        }
+
+        private void btnEnterLink_Click(object sender, EventArgs e)
+        {
+            webView1.Navigate(new Uri(txtLinkWebView.Text, UriKind.Absolute));
+        }
     }
 }

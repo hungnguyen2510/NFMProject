@@ -33,22 +33,26 @@
             this.label1 = new System.Windows.Forms.Label();
             this.txtPathWatching = new System.Windows.Forms.TextBox();
             this.systemTray = new System.Windows.Forms.NotifyIcon(this.components);
+            this.contextMenuStrip1 = new System.Windows.Forms.ContextMenuStrip(this.components);
+            this.viewToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.quitToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.btnWatching = new System.Windows.Forms.Button();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
             this.txtLog = new System.Windows.Forms.TextBox();
             this.btnRefeshLog = new System.Windows.Forms.Button();
             this.folderBrowserDialog1 = new System.Windows.Forms.FolderBrowserDialog();
-            this.contextMenuStrip1 = new System.Windows.Forms.ContextMenuStrip(this.components);
-            this.quitToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.viewToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.groupBox1.SuspendLayout();
+            this.btnOpenFolderFileLog = new System.Windows.Forms.Button();
+            this.picCheck = new System.Windows.Forms.PictureBox();
+            this.btnOpenFolderFileWatching = new System.Windows.Forms.Button();
             this.contextMenuStrip1.SuspendLayout();
+            this.groupBox1.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.picCheck)).BeginInit();
             this.SuspendLayout();
             // 
             // label1
             // 
             this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(13, 16);
+            this.label1.Location = new System.Drawing.Point(16, 23);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(78, 13);
             this.label1.TabIndex = 0;
@@ -56,10 +60,12 @@
             // 
             // txtPathWatching
             // 
-            this.txtPathWatching.Location = new System.Drawing.Point(97, 13);
+            this.txtPathWatching.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.txtPathWatching.Location = new System.Drawing.Point(101, 21);
             this.txtPathWatching.Name = "txtPathWatching";
-            this.txtPathWatching.Size = new System.Drawing.Size(126, 20);
-            this.txtPathWatching.TabIndex = 1;
+            this.txtPathWatching.ReadOnly = true;
+            this.txtPathWatching.Size = new System.Drawing.Size(105, 20);
+            this.txtPathWatching.TabIndex = 2;
             // 
             // systemTray
             // 
@@ -68,12 +74,34 @@
             this.systemTray.Icon = ((System.Drawing.Icon)(resources.GetObject("systemTray.Icon")));
             this.systemTray.MouseDoubleClick += new System.Windows.Forms.MouseEventHandler(this.systemTray_MouseDoubleClick);
             // 
+            // contextMenuStrip1
+            // 
+            this.contextMenuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.viewToolStripMenuItem,
+            this.quitToolStripMenuItem});
+            this.contextMenuStrip1.Name = "contextMenuStrip1";
+            this.contextMenuStrip1.Size = new System.Drawing.Size(181, 70);
+            // 
+            // viewToolStripMenuItem
+            // 
+            this.viewToolStripMenuItem.Name = "viewToolStripMenuItem";
+            this.viewToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.viewToolStripMenuItem.Text = "View";
+            this.viewToolStripMenuItem.Click += new System.EventHandler(this.viewToolStripMenuItem_Click);
+            // 
+            // quitToolStripMenuItem
+            // 
+            this.quitToolStripMenuItem.Name = "quitToolStripMenuItem";
+            this.quitToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.quitToolStripMenuItem.Text = "Quit";
+            this.quitToolStripMenuItem.Click += new System.EventHandler(this.quitToolStripMenuItem_Click);
+            // 
             // btnWatching
             // 
-            this.btnWatching.Location = new System.Drawing.Point(229, 11);
+            this.btnWatching.Location = new System.Drawing.Point(19, 51);
             this.btnWatching.Name = "btnWatching";
-            this.btnWatching.Size = new System.Drawing.Size(80, 23);
-            this.btnWatching.TabIndex = 2;
+            this.btnWatching.Size = new System.Drawing.Size(126, 23);
+            this.btnWatching.TabIndex = 1;
             this.btnWatching.Text = "Watching";
             this.btnWatching.UseVisualStyleBackColor = true;
             this.btnWatching.Click += new System.EventHandler(this.btnWatching_Click);
@@ -81,59 +109,76 @@
             // groupBox1
             // 
             this.groupBox1.Controls.Add(this.txtLog);
-            this.groupBox1.Location = new System.Drawing.Point(13, 51);
+            this.groupBox1.Location = new System.Drawing.Point(12, 80);
             this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Size = new System.Drawing.Size(507, 207);
+            this.groupBox1.Size = new System.Drawing.Size(655, 327);
             this.groupBox1.TabIndex = 3;
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "Logs";
             // 
             // txtLog
             // 
+            this.txtLog.BackColor = System.Drawing.SystemColors.WindowText;
+            this.txtLog.Font = new System.Drawing.Font("Consolas", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.txtLog.ForeColor = System.Drawing.SystemColors.Window;
             this.txtLog.Location = new System.Drawing.Point(7, 20);
             this.txtLog.Multiline = true;
             this.txtLog.Name = "txtLog";
+            this.txtLog.ReadOnly = true;
             this.txtLog.ScrollBars = System.Windows.Forms.ScrollBars.Both;
-            this.txtLog.Size = new System.Drawing.Size(494, 181);
+            this.txtLog.Size = new System.Drawing.Size(642, 301);
             this.txtLog.TabIndex = 2;
+            this.txtLog.Enter += new System.EventHandler(this.txtLog_Enter);
             // 
             // btnRefeshLog
             // 
-            this.btnRefeshLog.Location = new System.Drawing.Point(315, 11);
+            this.btnRefeshLog.Location = new System.Drawing.Point(151, 51);
             this.btnRefeshLog.Name = "btnRefeshLog";
-            this.btnRefeshLog.Size = new System.Drawing.Size(74, 23);
+            this.btnRefeshLog.Size = new System.Drawing.Size(126, 23);
             this.btnRefeshLog.TabIndex = 4;
             this.btnRefeshLog.Text = "RefeshLog";
             this.btnRefeshLog.UseVisualStyleBackColor = true;
             this.btnRefeshLog.Click += new System.EventHandler(this.btnRefeshLog_Click);
             // 
-            // contextMenuStrip1
+            // btnOpenFolderFileLog
             // 
-            this.contextMenuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.viewToolStripMenuItem,
-            this.quitToolStripMenuItem});
-            this.contextMenuStrip1.Name = "contextMenuStrip1";
-            this.contextMenuStrip1.Size = new System.Drawing.Size(100, 48);
+            this.btnOpenFolderFileLog.Location = new System.Drawing.Point(283, 51);
+            this.btnOpenFolderFileLog.Name = "btnOpenFolderFileLog";
+            this.btnOpenFolderFileLog.Size = new System.Drawing.Size(126, 23);
+            this.btnOpenFolderFileLog.TabIndex = 5;
+            this.btnOpenFolderFileLog.Text = "Open Folder FL";
+            this.btnOpenFolderFileLog.UseVisualStyleBackColor = true;
+            this.btnOpenFolderFileLog.Click += new System.EventHandler(this.btnOpenFolderFileLog_Click);
             // 
-            // quitToolStripMenuItem
+            // picCheck
             // 
-            this.quitToolStripMenuItem.Name = "quitToolStripMenuItem";
-            this.quitToolStripMenuItem.Size = new System.Drawing.Size(99, 22);
-            this.quitToolStripMenuItem.Text = "Quit";
-            this.quitToolStripMenuItem.Click += new System.EventHandler(this.quitToolStripMenuItem_Click);
+            this.picCheck.Image = ((System.Drawing.Image)(resources.GetObject("picCheck.Image")));
+            this.picCheck.Location = new System.Drawing.Point(631, 11);
+            this.picCheck.Name = "picCheck";
+            this.picCheck.Size = new System.Drawing.Size(36, 34);
+            this.picCheck.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
+            this.picCheck.TabIndex = 6;
+            this.picCheck.TabStop = false;
+            this.picCheck.Visible = false;
             // 
-            // viewToolStripMenuItem
+            // btnOpenFolderFileWatching
             // 
-            this.viewToolStripMenuItem.Name = "viewToolStripMenuItem";
-            this.viewToolStripMenuItem.Size = new System.Drawing.Size(99, 22);
-            this.viewToolStripMenuItem.Text = "View";
-            this.viewToolStripMenuItem.Click += new System.EventHandler(this.viewToolStripMenuItem_Click);
+            this.btnOpenFolderFileWatching.Location = new System.Drawing.Point(415, 51);
+            this.btnOpenFolderFileWatching.Name = "btnOpenFolderFileWatching";
+            this.btnOpenFolderFileWatching.Size = new System.Drawing.Size(126, 23);
+            this.btnOpenFolderFileWatching.TabIndex = 7;
+            this.btnOpenFolderFileWatching.Text = "Open Folder FW";
+            this.btnOpenFolderFileWatching.UseVisualStyleBackColor = true;
+            this.btnOpenFolderFileWatching.Click += new System.EventHandler(this.btnOpenFolderFileWatching_Click);
             // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(532, 270);
+            this.ClientSize = new System.Drawing.Size(685, 415);
+            this.Controls.Add(this.btnOpenFolderFileWatching);
+            this.Controls.Add(this.picCheck);
+            this.Controls.Add(this.btnOpenFolderFileLog);
             this.Controls.Add(this.btnRefeshLog);
             this.Controls.Add(this.groupBox1);
             this.Controls.Add(this.btnWatching);
@@ -144,9 +189,10 @@
             this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.MainForm_FormClosed);
             this.Load += new System.EventHandler(this.MainForm_Load);
             this.Resize += new System.EventHandler(this.MainForm_Resize);
+            this.contextMenuStrip1.ResumeLayout(false);
             this.groupBox1.ResumeLayout(false);
             this.groupBox1.PerformLayout();
-            this.contextMenuStrip1.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.picCheck)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -165,5 +211,8 @@
         private System.Windows.Forms.ContextMenuStrip contextMenuStrip1;
         private System.Windows.Forms.ToolStripMenuItem quitToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem viewToolStripMenuItem;
+        private System.Windows.Forms.Button btnOpenFolderFileLog;
+        private System.Windows.Forms.PictureBox picCheck;
+        private System.Windows.Forms.Button btnOpenFolderFileWatching;
     }
 }
