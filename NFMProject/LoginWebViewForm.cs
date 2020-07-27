@@ -18,12 +18,14 @@
             InitializeComponent();
         }
 
-        private async void webView1_ScriptNotify(object sender, Microsoft.Toolkit.Win32.UI.Controls.Interop.WinRT.WebViewControlScriptNotifyEventArgs e)
+        private void webView1_ScriptNotify(object sender, Microsoft.Toolkit.Win32.UI.Controls.Interop.WinRT.WebViewControlScriptNotifyEventArgs e)
         {
             try
             {
-                string stringReturn = await webView1.InvokeScriptAsync("sendscript");
+                string stringReturn = e.Value;
                 token = JObject.Parse(stringReturn)["token"].ToString();
+                //MessageBox.Show(token);
+
                 if (stringReturn != "")
                 {
                     MainForm fm = new MainForm();

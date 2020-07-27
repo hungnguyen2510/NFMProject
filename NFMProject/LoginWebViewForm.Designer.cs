@@ -42,7 +42,7 @@
             this.webView1.MinimumSize = new System.Drawing.Size(20, 20);
             this.webView1.Name = "webView1";
             this.webView1.Size = new System.Drawing.Size(1003, 610);
-            this.webView1.Source = new System.Uri("https://google.com/", System.UriKind.Absolute);
+            this.webView1.Source = new System.Uri("https://app.lhu.edu.vn/?appmode=win", System.UriKind.Absolute);
             this.webView1.TabIndex = 3;
             this.webView1.ScriptNotify += new System.EventHandler<Microsoft.Toolkit.Win32.UI.Controls.Interop.WinRT.WebViewControlScriptNotifyEventArgs>(this.webView1_ScriptNotify);
             // 
