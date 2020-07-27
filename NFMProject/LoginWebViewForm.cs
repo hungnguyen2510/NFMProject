@@ -28,8 +28,8 @@
 
                 if (stringReturn != "")
                 {
-                    MainForm fm = new MainForm();
-                    fm.Show();
+                    FastProjectForm fastProjectForm = new FastProjectForm();
+                    fastProjectForm.Show();
                     this.Hide();
                 }
             }
@@ -50,8 +50,12 @@
             }
             return o2;
         }
+        private void btnEnterLink_Click(object sender, EventArgs e)
+        {
+            webView1.Navigate(new Uri(txtLinkWebView.Text, UriKind.Absolute));
+        }
 
-        private void btnLoadConfig_Click(object sender, EventArgs e)
+        private void LoginWebViewForm_Load(object sender, EventArgs e)
         {
             try
             {
@@ -64,31 +68,30 @@
                 }
                 if (strConfig != "")
                 {
-                    string pathFile = pathConfig + strConfig;
-                    JObject ob = ReadFileJSON(pathFile);
-                    Config cf = JsonConvert.DeserializeObject<Config>(ob.ToString());
-                    if (cf.token != "")
+                    DialogResult res = MessageBox.Show("Ban co muon load config ko?", "NFM", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
+                    if (res == DialogResult.Yes)
                     {
-                        tokenConfig = cf.token;
-                        pathWatchingConfig = cf.pathWatching;
-                        MainForm fm = new MainForm();
-                        fm.Show();
-                        this.Hide();
+                        string pathFile = pathConfig + strConfig;
+                        JObject ob = ReadFileJSON(pathFile);
+                        Config cf = JsonConvert.DeserializeObject<Config>(ob.ToString());
+                        if (cf.token != "")
+                        {
+                            tokenConfig = cf.token;
+                            pathWatchingConfig = cf.pathWatching;
+                            FastProjectForm fastProjectForm = new FastProjectForm();
+                            fastProjectForm.Show();
+                            this.Hide();
+                            //MainForm fm = new MainForm();
+                            //fm.Show();
+                            //this.Hide();
+                        }
                     }
                 }
-                else
-                {
-                    MessageBox.Show("Khong co config");
-                }
             }
-            catch (Exception ex) {
+            catch (Exception ex)
+            {
                 MessageBox.Show(ex.Message);
             }
-        }
-
-        private void btnEnterLink_Click(object sender, EventArgs e)
-        {
-            webView1.Navigate(new Uri(txtLinkWebView.Text, UriKind.Absolute));
         }
     }
 }

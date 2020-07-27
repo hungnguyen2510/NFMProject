@@ -25,7 +25,7 @@ namespace NFMProject
         {
             try
             {
-                
+                Debug.Print(LoginWebViewForm.token);
                 if (LoginWebViewForm.pathWatchingConfig.Trim() != "") {
                     txtPathWatching.Text = LoginWebViewForm.pathWatchingConfig;
                     Watching(LoginWebViewForm.pathWatchingConfig);
