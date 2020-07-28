@@ -66,24 +66,36 @@
     </dependentAssembly>
   </dependency>
   <dependency>
-    <dependentAssembly dependencyType="install" allowDelayedBinding="true" codebase="NFMProject.exe" size="144368">
+    <dependentAssembly dependencyType="install" allowDelayedBinding="true" codebase="NFMProject.exe" size="155120">
       <assemblyIdentity name="NFMProject" version="1.0.0.0" language="neutral" processorArchitecture="msil" />
       <hash>
         <dsig:Transforms>
           <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
         </dsig:Transforms>
         <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha256" />
-        <dsig:DigestValue>ia9LTzOMAbTFYFRiu0W//rm66tbmwIQ9kUaPNcyaWLI=</dsig:DigestValue>
+        <dsig:DigestValue>n0QPEv/Y0CCFXionn9vrpy6ZWEaHVK7kj+oaHA1tBo4=</dsig:DigestValue>
       </hash>
     </dependentAssembly>
   </dependency>
-  <file name="NFMProject.exe.config" size="180">
+  <dependency>
+    <dependentAssembly dependencyType="install" allowDelayedBinding="true" codebase="System.Net.Http.Formatting.dll" size="178808">
+      <assemblyIdentity name="System.Net.Http.Formatting" version="5.2.7.0" publicKeyToken="31BF3856AD364E35" language="neutral" processorArchitecture="msil" />
+      <hash>
+        <dsig:Transforms>
+          <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
+        </dsig:Transforms>
+        <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha256" />
+        <dsig:DigestValue>e1itxuI7JM1mFbNehIoAK9oFOibUj53a+s/ICY6XxJw=</dsig:DigestValue>
+      </hash>
+    </dependentAssembly>
+  </dependency>
+  <file name="NFMProject.exe.config" size="532">
     <hash>
       <dsig:Transforms>
         <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
       </dsig:Transforms>
       <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha256" />
-      <dsig:DigestValue>XO5gGmqXCRJFNrxMxIWn7cfqVYnOw8AZ1m9rYHnEUS0=</dsig:DigestValue>
+      <dsig:DigestValue>O03gU8uRpMxPLfemB1J7CGE6fa8PMU8T+Mu5lM0OAZ0=</dsig:DigestValue>
     </hash>
   </file>
   <compatibility xmlns="urn:schemas-microsoft-com:compatibility.v1">

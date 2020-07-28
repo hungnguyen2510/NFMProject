@@ -150,7 +150,7 @@ namespace NFMProject
             {
                 content = reader.ReadToEnd();
             }
-            WriteToFile($"FileSystemWatcher_Changed:  {e.Name} -- \n{content} -- {DateTime.Now}");
+            WriteToFile($"FileSystemWatcher_Changed:  {e.Name} -- {DateTime.Now}");
 
         }
 

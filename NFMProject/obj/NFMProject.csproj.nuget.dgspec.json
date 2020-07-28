@@ -34,6 +34,10 @@
       "frameworks": {
         "net472": {
           "dependencies": {
+            "Microsoft.AspNet.WebApi.Client": {
+              "target": "Package",
+              "version": "[5.2.7, )"
+            },
             "Microsoft.Toolkit.Forms.UI.Controls.WebView": {
               "target": "Package",
               "version": "[6.1.1, )"

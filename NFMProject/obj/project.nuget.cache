@@ -1,9 +1,10 @@
 {
   "version": 2,
-  "dgSpecHash": "Fmvn+U/UDyOLwhLPO19hoQztFMiTsbtlEeyxP0CyPMKcASeUBibFAR6/zZZdAU3h4VRtLl/fE5IxGLkB7A53+w==",
+  "dgSpecHash": "J+yYD8Kj62xzoHHe/ja4Sj2ZIzWh90u9gIFwi42O2kucFVuJKsR+8HLBComgTUXsIxvWPiRCnTHYyGQwuXnbFw==",
   "success": true,
   "projectFilePath": "C:\\Users\\Hung Mer\\Source\\Repos\\NFMProject\\NFMProject\\NFMProject.csproj",
   "expectedPackageFiles": [
+    "C:\\Users\\Hung Mer\\.nuget\\packages\\microsoft.aspnet.webapi.client\\5.2.7\\microsoft.aspnet.webapi.client.5.2.7.nupkg.sha512",
     "C:\\Users\\Hung Mer\\.nuget\\packages\\microsoft.toolkit.forms.ui.controls.webview\\6.1.1\\microsoft.toolkit.forms.ui.controls.webview.6.1.1.nupkg.sha512",
     "C:\\Users\\Hung Mer\\.nuget\\packages\\microsoft.windows.sdk.contracts\\10.0.18362.2005\\microsoft.windows.sdk.contracts.10.0.18362.2005.nupkg.sha512",
     "C:\\Users\\Hung Mer\\.nuget\\packages\\newtonsoft.json\\12.0.3\\newtonsoft.json.12.0.3.nupkg.sha512",

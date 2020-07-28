@@ -23,13 +23,15 @@
             try
             {
                 string stringReturn = e.Value;
-                token = JObject.Parse(stringReturn)["token"].ToString();
-                //MessageBox.Show(token);
-
+                token = JObject.Parse(stringReturn)["value"]["token"].ToString();
                 if (stringReturn != "")
                 {
-                    FastProjectForm fastProjectForm = new FastProjectForm();
-                    fastProjectForm.Show();
+                    //FastProjectForm fastProjectForm = new FastProjectForm();
+                    //fastProjectForm.Show();
+                    //this.Hide();
+
+                    MainForm mainForm = new MainForm();
+                    mainForm.Show();
                     this.Hide();
                 }
             }
@@ -81,9 +83,6 @@
                             FastProjectForm fastProjectForm = new FastProjectForm();
                             fastProjectForm.Show();
                             this.Hide();
-                            //MainForm fm = new MainForm();
-                            //fm.Show();
-                            //this.Hide();
                         }
                     }
                 }

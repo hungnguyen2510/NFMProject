@@ -33,3 +33,5 @@ C:\Users\Hung Mer\Source\Repos\NFMProject\NFMProject\obj\Debug\NFMProject.exe
 C:\Users\Hung Mer\Source\Repos\NFMProject\NFMProject\obj\Debug\NFMProject.pdb
 C:\Users\Hung Mer\Source\Repos\NFMProject\NFMProject\obj\Debug\NFMProject.csprojAssemblyReference.cache
 C:\Users\Hung Mer\Source\Repos\NFMProject\NFMProject\obj\Debug\NFMProject.FastProjectForm.resources
+C:\Users\Hung Mer\Source\Repos\NFMProject\NFMProject\bin\Debug\System.Net.Http.Formatting.dll
+C:\Users\Hung Mer\Source\Repos\NFMProject\NFMProject\obj\Debug\NFMProject.exe.config

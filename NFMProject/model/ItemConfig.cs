@@ -9,8 +9,6 @@ namespace NFMProject
         public string pathFolderWatching;
     }
 
-    
-
     public class Account
     {
         public List<ItemConfig> items { get; set; }
