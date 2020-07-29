@@ -66,14 +66,14 @@
     </dependentAssembly>
   </dependency>
   <dependency>
-    <dependentAssembly dependencyType="install" allowDelayedBinding="true" codebase="NFMProject.exe" size="155120">
+    <dependentAssembly dependencyType="install" allowDelayedBinding="true" codebase="NFMProject.exe" size="284656">
       <assemblyIdentity name="NFMProject" version="1.0.0.0" language="neutral" processorArchitecture="msil" />
       <hash>
         <dsig:Transforms>
           <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
         </dsig:Transforms>
         <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha256" />
-        <dsig:DigestValue>n0QPEv/Y0CCFXionn9vrpy6ZWEaHVK7kj+oaHA1tBo4=</dsig:DigestValue>
+        <dsig:DigestValue>FZim25HkZZPmEwpnbrs+LFlcATT1B5HX0BbrqWptx5I=</dsig:DigestValue>
       </hash>
     </dependentAssembly>
   </dependency>

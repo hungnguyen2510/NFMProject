@@ -3,13 +3,15 @@ using Newtonsoft.Json.Linq;
 using System;
 using System.Diagnostics;
 using System.IO;
+using System.Threading;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace NFMProject
 {
     public partial class MainForm : Form
     {
-        public static string content;
+        
         public static string filepath = "";
         string pathConfig = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) + "\\NFM\\Config\\";
         string pathFolderDocument = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) + "\\NFM\\Logs\\";
@@ -22,31 +24,35 @@ namespace NFMProject
         }
 
         private void MainForm_Load(object sender, EventArgs e)
-        {
+        {           
             try
             {
-                Debug.Print(LoginWebViewForm.token);
-                if (LoginWebViewForm.pathWatchingConfig.Trim() != "") {
-                    txtPathWatching.Text = LoginWebViewForm.pathWatchingConfig;
-                    Watching(LoginWebViewForm.pathWatchingConfig);
-                    MessageBox.Show("Watching với config: " + LoginWebViewForm.pathWatchingConfig);
-                    DirectoryInfo d = new DirectoryInfo(pathFolderDocument);
-                    FileInfo[] Files = d.GetFiles("*.txt");
-                    string str = "";
-                    foreach (FileInfo file in Files)
-                    {
-                        str = file.Name;
-                    }
-                    if (str != "")
-                    {
-                        string pathFile = pathFolderDocument + str;
-                        ReadFileLog(pathFile);
-                    }                  
+                if(checkWatching == false) { 
+                    Watching(FastProjectForm.pathWatching);
+                    txtPathWatching.Text = FastProjectForm.pathWatching;
                 }
-                else
-                {
-                    txtLog.Text = "Empty Log";
-                }
+                //    Debug.Print(LoginWebViewForm.token);
+                //    if (LoginWebViewForm.pathWatchingConfig.Trim() != "") {
+                //        txtPathWatching.Text = LoginWebViewForm.pathWatchingConfig;
+                //        Watching(LoginWebViewForm.pathWatchingConfig);
+                //        MessageBox.Show("Watching với config: " + LoginWebViewForm.pathWatchingConfig);
+                //        DirectoryInfo d = new DirectoryInfo(pathFolderDocument);
+                //        FileInfo[] Files = d.GetFiles("*.txt");
+                //        string str = "";
+                //        foreach (FileInfo file in Files)
+                //        {
+                //            str = file.Name;
+                //        }
+                //        if (str != "")
+                //        {
+                //            string pathFile = pathFolderDocument + str;
+                //            ReadFileLog(pathFile);
+                //        }                  
+                //    }
+                //    else
+                //    {
+                //        txtLog.Text = "Empty Log";
+                //    }
             }
             catch (Exception ex)
             {
@@ -141,17 +147,29 @@ namespace NFMProject
             WriteToFile($"FileSystemWatcher_Deleted:  {e.Name} -- {DateTime.Now}");
         }
 
-        private static void FileSystemWatcher_Changed(object sender, FileSystemEventArgs e)
+        private async void FileSystemWatcher_Changed(object sender, FileSystemEventArgs e)
         {
             string path = @e.FullPath;
+            string content = "";
 
             using (FileStream file = new FileStream(path, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
             using (StreamReader reader = new StreamReader(file))
             {
                 content = reader.ReadToEnd();
             }
-            WriteToFile($"FileSystemWatcher_Changed:  {e.Name} -- {DateTime.Now}");
+            await PausaComTaskDelay();
+            if (content.Trim() == "") {
+                WriteToFile($"FileSystemWatcher_Changed:  {e.Name} -- {""} -- {DateTime.Now}");
+            }
+            else {
+                WriteToFile($"FileSystemWatcher_Changed:  {e.Name} -- {content} -- {DateTime.Now}");              
+            }
+            
+        }
 
+        async Task PausaComTaskDelay()
+        {
+            await Task.Delay(2000);           
         }
 
         private static void FileSystemWatcher_Created(object sender, FileSystemEventArgs e)
@@ -166,7 +184,8 @@ namespace NFMProject
             systemTray.Visible = false;
 
         }
-        private void Watching(string pathWatching) {
+        private void Watching(string pathWatching)
+        {
             try
             {
                 if (pathWatching != "")
@@ -182,7 +201,7 @@ namespace NFMProject
                         systemTray.Text = "Watching..." + pathWatching;
                         systemTray.BalloonTipTitle = "NFM System";
                         systemTray.BalloonTipText = "Watching..." + pathWatching;
-                        systemTray.ShowBalloonTip(1000);
+                        systemTray.ShowBalloonTip(500);
                     }
                     checkWatching = true;
                     picCheck.Visible = true;
@@ -333,12 +352,19 @@ namespace NFMProject
 
         private void MainForm_FormClosed(object sender, FormClosedEventArgs e)
         {
-            Application.Exit();
+            FastProjectForm fastProjectForm = new FastProjectForm();
+            this.Hide();
+            fastProjectForm.ShowDialog();
+            this.Close();
+            checkWatching = false;
         }
 
         private void quitToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            Application.Exit();
+            FastProjectForm fastProjectForm = new FastProjectForm();
+            this.Hide();
+            fastProjectForm.ShowDialog();
+            this.Close();
         }
 
         private void viewToolStripMenuItem_Click(object sender, EventArgs e)
@@ -350,25 +376,32 @@ namespace NFMProject
 
         private void MainForm_Resize(object sender, EventArgs e)
         {
-            if (this.WindowState == FormWindowState.Minimized)
+            try
             {
-                this.Hide();
-                systemTray.Visible = true;
-                if (txtPathWatching.Text == "")
+                if (this.WindowState == FormWindowState.Minimized)
                 {
-                    systemTray.Text = "Vui long chon folder watching.....";
-                    systemTray.BalloonTipTitle = "NFM System";
-                    systemTray.BalloonTipText = "Vui long chon folder watching.....";
-                    systemTray.ShowBalloonTip(1000);
+                    systemTray.Visible = true;
+                    if (txtPathWatching.Text == "" && FastProjectForm.pathWatching == "")
+                    {
+                        systemTray.Text = "Vui long chon folder watching.....";
+                        systemTray.BalloonTipTitle = "NFM System";
+                        systemTray.BalloonTipText = "Vui long chon folder watching.....";
+                        systemTray.ShowBalloonTip(1000);
+                    }
+                    //this.Hide();
+                }
+                if (this.WindowState == FormWindowState.Normal)
+                {
+                    this.Show();
+                    txtLog.Text = "";
+                    if (filepath.Trim() != "")
+                    {
+                        ReadFileLog(filepath);
+                    }
                 }
             }
-            if (this.WindowState == FormWindowState.Normal)
-            {
-                txtLog.Text = "";
-                if (filepath.Trim() != "")
-                {
-                    ReadFileLog(filepath);
-                }
+            catch (Exception ex) {
+                MessageBox.Show(ex.Message);
             }
         }
 
@@ -383,6 +416,6 @@ namespace NFMProject
                 MessageBox.Show("Vui long chon folder watching");
                 btnWatching.PerformClick();
             }
-        }     
+        }
     }
 }

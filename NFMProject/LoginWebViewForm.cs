@@ -3,6 +3,7 @@
     using System;
     using System.Diagnostics;
     using System.IO;
+    using System.Threading.Tasks;
     using System.Windows.Forms;
     using Newtonsoft.Json;
     using Newtonsoft.Json.Linq;
@@ -13,8 +14,10 @@
         public static string pathWatchingConfig = "";
         public static string tokenConfig = "";
         string pathConfig = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) + "\\NFM\\Config\\";
+
         public LoginWebViewForm()
         {
+            
             InitializeComponent();
         }
 
@@ -26,13 +29,16 @@
                 token = JObject.Parse(stringReturn)["value"]["token"].ToString();
                 if (stringReturn != "")
                 {
-                    //FastProjectForm fastProjectForm = new FastProjectForm();
-                    //fastProjectForm.Show();
                     //this.Hide();
+                    FastProjectForm fastProjectForm = new FastProjectForm();
+                    fastProjectForm.ShowDialog();
+                    this.Close();
+                    //Application.Run(new FastProjectForm());
+                    
 
-                    MainForm mainForm = new MainForm();
-                    mainForm.Show();
-                    this.Hide();
+                    //MainForm mainForm = new MainForm();
+                    //mainForm.Show();
+                    //this.Hide();
                 }
             }
             catch (Exception ex)
@@ -54,6 +60,7 @@
         }
         private void btnEnterLink_Click(object sender, EventArgs e)
         {
+            
             webView1.Navigate(new Uri(txtLinkWebView.Text, UriKind.Absolute));
         }
 
@@ -72,18 +79,20 @@
                 {
                     DialogResult res = MessageBox.Show("Ban co muon load config ko?", "NFM", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
                     if (res == DialogResult.Yes)
-                    {
+                    {                       
                         string pathFile = pathConfig + strConfig;
                         JObject ob = ReadFileJSON(pathFile);
                         Config cf = JsonConvert.DeserializeObject<Config>(ob.ToString());
                         if (cf.token != "")
                         {
-                            tokenConfig = cf.token;
+                            //this.Hide();
+                            token = cf.token;
                             pathWatchingConfig = cf.pathWatching;
                             FastProjectForm fastProjectForm = new FastProjectForm();
-                            fastProjectForm.Show();
-                            this.Hide();
-                        }
+                            fastProjectForm.ShowDialog();
+                            //Application.Run(new FastProjectForm());
+                            this.Close();
+                        }                       
                     }
                 }
             }

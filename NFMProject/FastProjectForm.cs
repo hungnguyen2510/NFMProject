@@ -21,7 +21,10 @@ namespace NFMProject
 {
     public partial class FastProjectForm : Form
     {
-        
+        static string tokenLogin = "";
+        public static string pathWatching = "";
+        bool checkWatching = false;
+        static string content = "";
         public FastProjectForm()
         {
             InitializeComponent();
@@ -29,9 +32,9 @@ namespace NFMProject
 
         private void FastProjectForm_Load(object sender, EventArgs e)
         {
-            Debug.Print(LoginWebViewForm.token);
+            tokenLogin = LoginWebViewForm.token;
+            Debug.Print(tokenLogin);
             GetListProject();
-                      
         }
 
         private void FastProjectForm_FormClosed(object sender, FormClosedEventArgs e)
@@ -48,7 +51,7 @@ namespace NFMProject
                 client.BaseAddress = new Uri("https://tapi.lhu.edu.vn/");
                 client.DefaultRequestHeaders.Accept.Clear();
                 client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
-                client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", LoginWebViewForm.token);
+                client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", tokenLogin);
                 //GET Method  
                 HttpResponseMessage response = await client.GetAsync("fp/admin_ProjectList");
 
@@ -114,7 +117,7 @@ namespace NFMProject
                 client.BaseAddress = new Uri("https://tapi.lhu.edu.vn/");
                 client.DefaultRequestHeaders.Accept.Clear();
                 client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
-                client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", LoginWebViewForm.token);
+                client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", tokenLogin);
                 //GET Method  
                 HttpResponseMessage response = await client.GetAsync("fp/admin_modulelist?pid=" + projectID);
 
@@ -164,7 +167,7 @@ namespace NFMProject
         }
 
 
-        private async void GetContentModuleJS(string moduleID)
+        private async Task<String> GetContentModuleFileJS(string moduleID)
         {
             string contentJS = "";
             try
@@ -173,7 +176,7 @@ namespace NFMProject
                 client.BaseAddress = new Uri("https://tapi.lhu.edu.vn/");
                 client.DefaultRequestHeaders.Accept.Clear();
                 client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
-                client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", LoginWebViewForm.token);
+                client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", tokenLogin);
                 //GET Method  
                 HttpResponseMessage response = await client.GetAsync("fp/obj/admin_moduledata/module-code/fp/" + moduleID);
 
@@ -185,21 +188,24 @@ namespace NFMProject
 
                     if (contentJS.Trim() != "")
                     {
-                        MessageBox.Show(contentJS);
+                        return contentJS;
                     }
                     else {
-                        MessageBox.Show("Khong co noi dung");
+                        contentJS = "";
                     }
                 }
                 else
                 {
                     Debug.Print("Internal server Error");
                 }
+                
             }
             catch (Exception ex)
             {
                 MessageBox.Show(ex.Message);
             }
+            return contentJS;
+
         }
         private void cboProjectList_SelectedIndexChanged(object sender, EventArgs e)
         {
@@ -207,25 +213,263 @@ namespace NFMProject
             GetListModule(projectID);
         }
 
-        private void dgvListModules_CellClick(object sender, DataGridViewCellEventArgs e)
+        private void OpenVisualCode(string pathFolder) {
+            var proc1 = new ProcessStartInfo();
+            proc1.UseShellExecute = true;
+
+            proc1.WorkingDirectory = pathFolder;
+
+            proc1.FileName = @"C:\Windows\System32\cmd.exe";
+            //proc1.Verb = "runas";
+            proc1.Arguments = "/c code .";
+            proc1.WindowStyle = ProcessWindowStyle.Hidden;
+            Process.Start(proc1);
+        }
+
+        private void Watching(string pathWatching)
+        {
+            try
+            {
+                if (pathWatching != "")
+                {                   
+                    this.WindowState = FormWindowState.Minimized;
+                    if (this.WindowState == FormWindowState.Minimized)
+                    {
+                        systemTray.Visible = true;
+                        WriteToFile("Service is started at " + pathWatching + " ---- " + DateTime.Now);
+                        CreateFileWatcher(pathWatching);
+                        systemTray.Text = "Watching..." + pathWatching;
+                        systemTray.BalloonTipTitle = "NFM System";
+                        systemTray.BalloonTipText = "Watching..." + pathWatching;
+                        systemTray.ShowBalloonTip(500);
+                    }
+                    checkWatching = true;
+                    picState.Visible = true;
+                }
+            }
+            catch (Exception ex)
+            {
+                Debug.Print(ex.Message);
+            }
+        }
+
+        public void CreateFileWatcher(string path)
+        {
+            var fileSystemWatcher = new FileSystemWatcher();
+            fileSystemWatcher.Created += FileSystemWatcher_Created;
+            fileSystemWatcher.Changed += FileSystemWatcher_Changed;
+            fileSystemWatcher.Deleted += FileSystemWatcher_Deleted;
+            fileSystemWatcher.Renamed += FileSystemWatcher_Renamed;
+            fileSystemWatcher.Path = path;
+            fileSystemWatcher.EnableRaisingEvents = true;
+
+            WriteToFile("Watching....");
+        }
+
+        public static void WriteToFile(string Message)
+        {
+            try
+            {
+                string path = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) + "\\NFM\\Logs\\";
+                if (!Directory.Exists(path))
+                {
+                    Directory.CreateDirectory(path);
+                }
+                string filepath = path + "\\NFMLogs_" + DateTime.Now.Date.ToShortDateString().Replace('/', '_') + ".txt";
+                if (!File.Exists(filepath))
+                {
+                    // Create a file to write to.
+                    using (StreamWriter sw = File.CreateText(filepath))
+                    {
+                        sw.WriteLine(Message);
+                    }
+                }
+                else
+                {
+                    using (StreamWriter sw = File.AppendText(filepath))
+                    {
+                        sw.WriteLine(Message);
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Debug.Print(ex.Message);
+            }
+        }
+
+        private static void FileSystemWatcher_Renamed(object sender, RenamedEventArgs e)
+        {
+            WriteToFile($"FileSystemWatcher_Renamed:  {e.OldName } to {e.Name} -- {DateTime.Now}");
+        }
+
+        private static void FileSystemWatcher_Deleted(object sender, FileSystemEventArgs e)
+        {
+            WriteToFile($"FileSystemWatcher_Deleted:  {e.Name} -- {DateTime.Now}");
+        }
+
+        private static async void PostContent(string data, string moduleID) 
+        {
+            try
+            {
+                HttpClient client = new HttpClient();
+                client.BaseAddress = new Uri("https://tapi.lhu.edu.vn/");
+                client.DefaultRequestHeaders.Accept.Clear();
+                client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+                client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", tokenLogin);
+                //GET Method
+                JObject jObject = new JObject();
+                jObject["data"] = data;
+                StringContent post = new StringContent(JsonConvert.SerializeObject(jObject), Encoding.UTF8, "application/json");
+                HttpResponseMessage response = await client.PostAsync("fp/obj/admin_editorupdate/module-code/fp/"+ moduleID, post);
+                //if (response.IsSuccessStatusCode)
+                //{
+                //    var res = await response.Content.ReadAsStringAsync();
+                //    MessageBox.Show(res);
+                //}
+                //else
+                //{
+                //    Debug.Print("Internal server Error");
+                //}
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
+        }
+
+        private static async void FileSystemWatcher_Changed(object sender, FileSystemEventArgs e)
+        {
+            string path = @e.FullPath;
+            await PausaComTaskDelay();
+            using (FileStream file = new FileStream(path, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
+            using (StreamReader reader = new StreamReader(file))
+            {
+                content = reader.ReadToEnd();
+            }           
+            if (content.Trim() == "")
+            {
+                WriteToFile($"FileSystemWatcher_Changed:  {e.Name} -- {""} -- {DateTime.Now}");
+                PostContent("", Path.GetFileNameWithoutExtension(e.Name));
+            }
+            else
+            {
+                await PausaComTaskDelay();
+                WriteToFile($"FileSystemWatcher_Changed:  {e.Name} -- {content} -- {DateTime.Now}");
+                //MessageBox.Show(Path.GetFileNameWithoutExtension(e.Name));
+                PostContent(content, Path.GetFileNameWithoutExtension(e.Name));
+            }
+
+        }
+        async static Task PausaComTaskDelay()
+        {
+            await Task.Delay(1000);
+        }
+
+        private static void FileSystemWatcher_Created(object sender, FileSystemEventArgs e)
+        {
+            WriteToFile($"FileSystemWatcher_Created:  {e.Name} -- {DateTime.Now}");
+        }
+
+        private async void dgvListModules_CellContentClick(object sender, DataGridViewCellEventArgs e)
         {
             string moduleID = "";
+            string contentJS = "";
             if (e.ColumnIndex == dgvListModules.Columns["edit_column"].Index && e.RowIndex >= 0)
             {
                 moduleID = dgvListModules.Rows[e.RowIndex].Cells[2].Value.ToString();
             }
 
-            try {
-                string pathFolder = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) + "\\NFM\\" + moduleID;
+            try
+            {
+                string pathFolder = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) + "\\NFM\\FastProject\\" + moduleID;
                 if (!Directory.Exists(pathFolder))
                 {
                     Directory.CreateDirectory(pathFolder);
                 }
-                GetContentModuleJS(moduleID);
+                string pathFileJS = pathFolder + "\\" + moduleID + ".js";
+                contentJS = await GetContentModuleFileJS(moduleID);
+                if (contentJS != "")
+                {
+                    if (!File.Exists(pathFileJS))
+                    {
+                        // Create a file to write to.
+                        using (StreamWriter sw = File.CreateText(pathFileJS))
+                        {
+                            sw.WriteLine(contentJS);
+                        }
+                        OpenVisualCode(pathFolder);
+                        Watching(pathFolder);
+                    }
+                    else
+                    {
+                        string temp = "Ban lua chon: \n Yes: tiep tuc chinh sua file local. \n No: Đồng bộ nội dung mới nhất trên server. \n Cancel: Hủy thao tác.";
+                        DialogResult res = MessageBox.Show(temp, "Information", MessageBoxButtons.YesNoCancel, MessageBoxIcon.Question);
+                        if (res == DialogResult.Yes)
+                        {
+                            OpenVisualCode(pathFolder);
+                            pathWatching = pathFolder;
+                            Watching(pathFolder);
+
+
+                        }
+                        if (res == DialogResult.No)
+                        {
+                            using (StreamWriter sw = File.CreateText(pathFileJS))
+                            {
+                                sw.WriteLine(contentJS);
+                                OpenVisualCode(pathFolder);
+                                pathWatching = pathFolder;
+                                Watching(pathFolder);
+                            }
+                        }
+                    }
+                }
+                else {
+                    // Create a file to write to.
+                    using (StreamWriter sw = File.CreateText(pathFileJS))
+                    {
+                        sw.WriteLine(contentJS);
+                    }
+                    OpenVisualCode(pathFolder);
+                    Watching(pathFolder);
+                }
             }
-            catch (Exception ex) {
+            catch (Exception ex)
+            {
                 MessageBox.Show(ex.Message);
             }
+        }
+
+        private void FastProjectForm_Resize(object sender, EventArgs e)
+        {
+            if (this.WindowState == FormWindowState.Minimized) {
+                //Hide();
+                systemTray.Visible = true;
+                if (checkWatching == false)
+                {
+                    systemTray.Text = "Vui long chon file watching.....";
+                    systemTray.BalloonTipTitle = "NFM System";
+                    systemTray.BalloonTipText = "Vui long chon file watching.....";
+                    systemTray.ShowBalloonTip(500);
+                }
+            }
+            if (this.WindowState == FormWindowState.Normal)
+            {
+               //Hide();
+                systemTray.Visible = false;               
+            }
+        }
+
+        private void systemTray_MouseDoubleClick(object sender, MouseEventArgs e)
+        {
+            Show();
+            this.WindowState = FormWindowState.Normal;
+            systemTray.Visible = false;
+        }
+        private void btnTest_Click(object sender, EventArgs e)
+        {
+            MessageBox.Show(content);
         }
     }
 }
