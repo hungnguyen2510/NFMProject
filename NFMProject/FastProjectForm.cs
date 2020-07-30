@@ -3,12 +3,9 @@ using Newtonsoft.Json.Linq;
 using NFMProject.model;
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Data;
 using System.Diagnostics;
-using System.Drawing;
 using System.IO;
-using System.Linq;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Reflection;
@@ -23,6 +20,7 @@ namespace NFMProject
     {
         static string tokenLogin = "";
         public static string pathWatching = "";
+        string pathConfig = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) + "\\NFM\\Config\\";
         bool checkWatching = false;
         static string content = "";
         public FastProjectForm()
@@ -32,8 +30,15 @@ namespace NFMProject
 
         private void FastProjectForm_Load(object sender, EventArgs e)
         {
-            tokenLogin = LoginWebViewForm.token;
-            Debug.Print(tokenLogin);
+            if (Program.token != "")
+            {
+                tokenLogin = Program.token;
+                Watching(Program.pathWatchingConfig);
+            }
+            else {
+                tokenLogin = LoginWebViewForm.token;
+                LoginWebViewForm.ActiveForm.Hide();
+            }
             GetListProject();
         }
 
@@ -77,7 +82,7 @@ namespace NFMProject
                 }
             }
             catch (Exception ex) {
-                MessageBox.Show(ex.Message);
+                MessageBox.Show(ex.Message, "NFM", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
         public class ListtoDataTable
@@ -97,7 +102,6 @@ namespace NFMProject
                     var values = new object[Props.Length];
                     for (int i = 0; i < Props.Length; i++)
                     {
-
                         values[i] = Props[i].GetValue(item, null);
                     }
                     dataTable.Rows.Add(values);
@@ -162,7 +166,7 @@ namespace NFMProject
             }
             catch (Exception ex)
             {
-                MessageBox.Show(ex.Message);
+                MessageBox.Show(ex.Message, "NFM", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
 
@@ -202,7 +206,7 @@ namespace NFMProject
             }
             catch (Exception ex)
             {
-                MessageBox.Show(ex.Message);
+                MessageBox.Show(ex.Message, "NFM", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
             return contentJS;
 
@@ -232,24 +236,35 @@ namespace NFMProject
             {
                 if (pathWatching != "")
                 {                   
+                    
+                    string filepathConfig = pathConfig + "\\config.json";
+                    Config cf = new Config();
+                    cf.token = tokenLogin;
+                    cf.pathWatching = pathWatching;
+                    string json = JsonConvert.SerializeObject(cf);
+                    using (StreamWriter sw = File.CreateText(filepathConfig))
+                    {
+                        sw.WriteLine(json);
+                    }
+                    checkWatching = true;
+                    picState.Visible = true;
                     this.WindowState = FormWindowState.Minimized;
                     if (this.WindowState == FormWindowState.Minimized)
                     {
+                        OpenVisualCode(pathWatching);
                         systemTray.Visible = true;
                         WriteToFile("Service is started at " + pathWatching + " ---- " + DateTime.Now);
-                        CreateFileWatcher(pathWatching);
+                        CreateFileWatcher(pathWatching);                       
                         systemTray.Text = "Watching..." + pathWatching;
                         systemTray.BalloonTipTitle = "NFM System";
                         systemTray.BalloonTipText = "Watching..." + pathWatching;
                         systemTray.ShowBalloonTip(500);
-                    }
-                    checkWatching = true;
-                    picState.Visible = true;
+                    }                                     
                 }
             }
             catch (Exception ex)
             {
-                Debug.Print(ex.Message);
+                MessageBox.Show(ex.Message, "NFM", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
 
@@ -275,7 +290,7 @@ namespace NFMProject
                 {
                     Directory.CreateDirectory(path);
                 }
-                string filepath = path + "\\NFMLogs_" + DateTime.Now.Date.ToShortDateString().Replace('/', '_') + ".txt";
+                string filepath = path + "\\NFMLogs_" + "_"+ DateTime.Now.Date.ToShortDateString().Replace('/', '_') + ".txt";
                 if (!File.Exists(filepath))
                 {
                     // Create a file to write to.
@@ -294,7 +309,7 @@ namespace NFMProject
             }
             catch (Exception ex)
             {
-                Debug.Print(ex.Message);
+                MessageBox.Show(ex.Message, "NFM", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
 
@@ -322,19 +337,10 @@ namespace NFMProject
                 jObject["data"] = data;
                 StringContent post = new StringContent(JsonConvert.SerializeObject(jObject), Encoding.UTF8, "application/json");
                 HttpResponseMessage response = await client.PostAsync("fp/obj/admin_editorupdate/module-code/fp/"+ moduleID, post);
-                //if (response.IsSuccessStatusCode)
-                //{
-                //    var res = await response.Content.ReadAsStringAsync();
-                //    MessageBox.Show(res);
-                //}
-                //else
-                //{
-                //    Debug.Print("Internal server Error");
-                //}
             }
             catch (Exception ex)
             {
-                MessageBox.Show(ex.Message);
+                MessageBox.Show(ex.Message, "NFM",MessageBoxButtons.OK,MessageBoxIcon.Error);
             }
         }
 
@@ -398,27 +404,25 @@ namespace NFMProject
                         {
                             sw.WriteLine(contentJS);
                         }
-                        OpenVisualCode(pathFolder);
+                        //OpenVisualCode(pathFolder);
                         Watching(pathFolder);
                     }
                     else
                     {
                         string temp = "Ban lua chon: \n Yes: tiep tuc chinh sua file local. \n No: Đồng bộ nội dung mới nhất trên server. \n Cancel: Hủy thao tác.";
-                        DialogResult res = MessageBox.Show(temp, "Information", MessageBoxButtons.YesNoCancel, MessageBoxIcon.Question);
+                        DialogResult res = MessageBox.Show(temp, "NFM", MessageBoxButtons.YesNoCancel, MessageBoxIcon.Question);
                         if (res == DialogResult.Yes)
                         {
-                            OpenVisualCode(pathFolder);
+                            //OpenVisualCode(pathFolder);
                             pathWatching = pathFolder;
                             Watching(pathFolder);
-
-
                         }
                         if (res == DialogResult.No)
                         {
                             using (StreamWriter sw = File.CreateText(pathFileJS))
                             {
                                 sw.WriteLine(contentJS);
-                                OpenVisualCode(pathFolder);
+                                //OpenVisualCode(pathFolder);
                                 pathWatching = pathFolder;
                                 Watching(pathFolder);
                             }
@@ -437,7 +441,7 @@ namespace NFMProject
             }
             catch (Exception ex)
             {
-                MessageBox.Show(ex.Message);
+                MessageBox.Show(ex.Message, "NFM", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
 
@@ -446,6 +450,7 @@ namespace NFMProject
             if (this.WindowState == FormWindowState.Minimized) {
                 //Hide();
                 systemTray.Visible = true;
+                this.Hide();
                 if (checkWatching == false)
                 {
                     systemTray.Text = "Vui long chon file watching.....";
@@ -466,10 +471,6 @@ namespace NFMProject
             Show();
             this.WindowState = FormWindowState.Normal;
             systemTray.Visible = false;
-        }
-        private void btnTest_Click(object sender, EventArgs e)
-        {
-            MessageBox.Show(content);
         }
     }
 }

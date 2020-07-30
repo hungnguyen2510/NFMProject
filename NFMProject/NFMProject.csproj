@@ -155,9 +155,7 @@
       <Version>12.0.3</Version>
     </PackageReference>
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="content\" />
-  </ItemGroup>
+  <ItemGroup />
   <ItemGroup>
     <BootstrapperPackage Include=".NETFramework,Version=v4.7.2">
       <Visible>False</Visible>
