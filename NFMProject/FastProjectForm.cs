@@ -22,6 +22,7 @@ namespace NFMProject
         public static string pathWatching = "";
         string pathConfig = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) + "\\NFM\\Config\\";
         bool checkWatching = false;
+        bool checkFormActive = false;
         static string content = "";
         public FastProjectForm()
         {
@@ -145,8 +146,8 @@ namespace NFMProject
                     ListtoDataTable lsttodt = new ListtoDataTable();
                     DataTable dt = lsttodt.ToDataTable(listModule.modules);
                     dgvListModules.DataSource = dt;
-                    int columnIndex = dgvListModules.ColumnCount;
 
+                    int columnIndex = dgvListModules.ColumnCount;
                     DataGridViewButtonColumn btnEditColumn = new DataGridViewButtonColumn();
                     btnEditColumn.Name = "edit_column";
                     btnEditColumn.Text = "Edit";
@@ -354,7 +355,7 @@ namespace NFMProject
         private static async void FileSystemWatcher_Changed(object sender, FileSystemEventArgs e)
         {
             string path = @e.FullPath;
-            await PausaComTaskDelay();
+            await TaskDelay(1000);
             using (FileStream file = new FileStream(path, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
             using (StreamReader reader = new StreamReader(file))
             {
@@ -367,7 +368,7 @@ namespace NFMProject
             }
             else
             {
-                await PausaComTaskDelay();
+                await TaskDelay(1000);
                 WriteToFile($"FileSystemWatcher_Changed:  {e.Name} -- {content} -- {DateTime.Now}");
                 //MessageBox.Show(Path.GetFileNameWithoutExtension(e.Name));
                 PostContent(content, Path.GetFileNameWithoutExtension(e.Name));
@@ -480,24 +481,49 @@ namespace NFMProject
             systemTray.Visible = false;
         }
 
+        async static Task TaskDelay(int miliSec)
+        {
+            await Task.Delay(miliSec);
+        }
         private void FastProjectForm_Activated(object sender, EventArgs e)
-        {           
-            Debug.Print("FastProjectForm_Activated");
-            Process[] processlist = Process.GetProcesses();
-            Process processCode = new Process();
-            foreach (Process process in processlist)
+        {
+            try
             {
-                if (!String.IsNullOrEmpty(process.MainWindowTitle))
+                if (checkFormActive)
                 {
-                    if (process.ProcessName.ToLower() == "code")
+                    Process[] processlist = Process.GetProcesses();
+                    Process processCode = new Process();
+                    foreach (Process process in processlist)
                     {
-                        processCode = process;
-                        break;
+                        if (!String.IsNullOrEmpty(process.MainWindowTitle))
+                        {
+                            if (process.ProcessName.ToLower() == "code")
+                            {
+                                processCode = process;
+                                break;
+                            }
+                        }
                     }
+                    string[] arrListStr = processCode.MainWindowTitle.Split(new char[] { '-' });
+                    string nameFileOpening = arrListStr[0].Trim();
+                    string folderFileOpening = arrListStr[1].Trim();
+                    Debug.Print(nameFileOpening);
+                    Debug.Print(folderFileOpening);
                 }
+                checkFormActive = false;
             }
-            string[] arrListStr = processCode.MainWindowTitle.Split(new char[] { '-' });
-            Debug.Print(arrListStr[0] + "-" + arrListStr[1]);
+            catch (Exception ex) {
+                Debug.Print(ex.Message);
+                MessageBox.Show("Bạn chưa mở VSCode");
+            }          
+            //Debug.Print(arrListStr[0] + "-" + arrListStr[1]);
+        }
+
+        private async void FastProjectForm_Deactivate(object sender, EventArgs e)
+        {
+            Debug.Print("Deactive");
+            await TaskDelay(5000);
+            checkFormActive = true;
         }
     }
 }
