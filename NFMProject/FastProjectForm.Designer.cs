@@ -36,8 +36,9 @@
             this.systemTray = new System.Windows.Forms.NotifyIcon(this.components);
             this.picState = new System.Windows.Forms.PictureBox();
             this.panel1 = new System.Windows.Forms.Panel();
-            this.panel2 = new System.Windows.Forms.Panel();
             this.label1 = new System.Windows.Forms.Label();
+            this.panel2 = new System.Windows.Forms.Panel();
+            this.timer1 = new System.Windows.Forms.Timer(this.components);
             ((System.ComponentModel.ISupportInitialize)(this.dgvListModules)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.picState)).BeginInit();
             this.panel1.SuspendLayout();
@@ -111,15 +112,6 @@
             this.panel1.Size = new System.Drawing.Size(1235, 78);
             this.panel1.TabIndex = 3;
             // 
-            // panel2
-            // 
-            this.panel2.Controls.Add(this.dgvListModules);
-            this.panel2.Dock = System.Windows.Forms.DockStyle.Bottom;
-            this.panel2.Location = new System.Drawing.Point(0, 74);
-            this.panel2.Name = "panel2";
-            this.panel2.Size = new System.Drawing.Size(1235, 567);
-            this.panel2.TabIndex = 4;
-            // 
             // label1
             // 
             this.label1.AutoSize = true;
@@ -132,6 +124,15 @@
             this.label1.TabIndex = 3;
             this.label1.Text = "Chọn project";
             // 
+            // panel2
+            // 
+            this.panel2.Controls.Add(this.dgvListModules);
+            this.panel2.Dock = System.Windows.Forms.DockStyle.Bottom;
+            this.panel2.Location = new System.Drawing.Point(0, 74);
+            this.panel2.Name = "panel2";
+            this.panel2.Size = new System.Drawing.Size(1235, 567);
+            this.panel2.TabIndex = 4;
+            // 
             // FastProjectForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -142,6 +143,7 @@
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Name = "FastProjectForm";
             this.Text = "NFM";
+            this.Activated += new System.EventHandler(this.FastProjectForm_Activated);
             this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.FastProjectForm_FormClosed);
             this.Load += new System.EventHandler(this.FastProjectForm_Load);
             this.Resize += new System.EventHandler(this.FastProjectForm_Resize);
@@ -163,5 +165,6 @@
         private System.Windows.Forms.Panel panel1;
         private System.Windows.Forms.Panel panel2;
         private System.Windows.Forms.Label label1;
+        private System.Windows.Forms.Timer timer1;
     }
 }

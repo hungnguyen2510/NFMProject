@@ -234,9 +234,13 @@ namespace NFMProject
         {
             try
             {
+                if (!Directory.Exists(pathWatching))
+                {
+                    Directory.CreateDirectory(pathWatching);
+                }
                 if (pathWatching != "")
-                {                   
-                    
+                {
+
                     string filepathConfig = pathConfig + "\\config.json";
                     Config cf = new Config();
                     cf.token = tokenLogin;
@@ -254,12 +258,15 @@ namespace NFMProject
                         OpenVisualCode(pathWatching);
                         systemTray.Visible = true;
                         WriteToFile("Service is started at " + pathWatching + " ---- " + DateTime.Now);
-                        CreateFileWatcher(pathWatching);                       
+                        CreateFileWatcher(pathWatching);
                         systemTray.Text = "Watching..." + pathWatching;
                         systemTray.BalloonTipTitle = "NFM System";
                         systemTray.BalloonTipText = "Watching..." + pathWatching;
                         systemTray.ShowBalloonTip(500);
-                    }                                     
+                    }
+                }
+                else {
+                    MessageBox.Show("TEST");
                 }
             }
             catch (Exception ex)
@@ -290,7 +297,7 @@ namespace NFMProject
                 {
                     Directory.CreateDirectory(path);
                 }
-                string filepath = path + "\\NFMLogs_" + "_"+ DateTime.Now.Date.ToShortDateString().Replace('/', '_') + ".txt";
+                string filepath = path + "\\NFMLogs_"+ DateTime.Now.Date.ToShortDateString().Replace('/', '_') + ".txt";
                 if (!File.Exists(filepath))
                 {
                     // Create a file to write to.
@@ -309,7 +316,7 @@ namespace NFMProject
             }
             catch (Exception ex)
             {
-                MessageBox.Show(ex.Message, "NFM", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                //MessageBox.Show(ex.Message, "NFM", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
 
@@ -471,6 +478,26 @@ namespace NFMProject
             Show();
             this.WindowState = FormWindowState.Normal;
             systemTray.Visible = false;
+        }
+
+        private void FastProjectForm_Activated(object sender, EventArgs e)
+        {           
+            Debug.Print("FastProjectForm_Activated");
+            Process[] processlist = Process.GetProcesses();
+            Process processCode = new Process();
+            foreach (Process process in processlist)
+            {
+                if (!String.IsNullOrEmpty(process.MainWindowTitle))
+                {
+                    if (process.ProcessName.ToLower() == "code")
+                    {
+                        processCode = process;
+                        break;
+                    }
+                }
+            }
+            string[] arrListStr = processCode.MainWindowTitle.Split(new char[] { '-' });
+            Debug.Print(arrListStr[0] + "-" + arrListStr[1]);
         }
     }
 }

@@ -1,6 +1,7 @@
 ﻿namespace NFMProject
 {
     using System;
+    using System.Diagnostics;
     using System.IO;
     using System.Windows.Forms;
     using Newtonsoft.Json;
@@ -45,6 +46,11 @@
 
         private void LoginWebViewForm_Load(object sender, EventArgs e)
         {            
+        }
+
+        private void button1_Click(object sender, EventArgs e)
+        {
+            
         }
     }
 }
