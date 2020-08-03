@@ -4,7 +4,6 @@ C:\Users\Hung Mer\Source\Repos\NFMProject\Test\bin\Debug\Test.pdb
 C:\Users\Hung Mer\Source\Repos\NFMProject\Test\bin\Debug\Microsoft.Toolkit.Forms.UI.Controls.WebView.dll
 C:\Users\Hung Mer\Source\Repos\NFMProject\Test\bin\Debug\Microsoft.Toolkit.Forms.UI.Controls.WebView.pdb
 C:\Users\Hung Mer\Source\Repos\NFMProject\Test\bin\Debug\Newtonsoft.Json.dll
-C:\Users\Hung Mer\Source\Repos\NFMProject\Test\obj\Debug\LoginProject.csprojAssemblyReference.cache
 C:\Users\Hung Mer\Source\Repos\NFMProject\Test\obj\Debug\LoginProject.LoginWebViewForm.resources
 C:\Users\Hung Mer\Source\Repos\NFMProject\Test\obj\Debug\Test.Properties.Resources.resources
 C:\Users\Hung Mer\Source\Repos\NFMProject\Test\obj\Debug\LoginProject.csproj.GenerateResource.cache

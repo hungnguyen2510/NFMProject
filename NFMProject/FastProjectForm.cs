@@ -16,6 +16,7 @@ using System.Management;
 using LoginProject;
 using Windows.UI.Xaml.Documents;
 using Module = NFM.model.Module;
+using System.Threading;
 
 namespace NFM
 {
@@ -27,9 +28,8 @@ namespace NFM
         string pathKey = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) + "\\NFM\\Key\\";
         bool checkWatching = false;
         static string content = "";
-        bool checkVSCodeRun = false;
-        ManagementEventWatcher startWatch = new ManagementEventWatcher("SELECT * FROM Win32_ProcessStartTrace");
-        ManagementEventWatcher processStop = new ManagementEventWatcher("SELECT * FROM Win32_ProcessStopTrace");
+        ManagementEventWatcher startWatch = new ManagementEventWatcher("SELECT * FROM Win32_ProcessStartTrace Where ProcessName='Code.exe'");
+        ManagementEventWatcher processStop = new ManagementEventWatcher("SELECT * FROM Win32_ProcessStopTrace Where ProcessName='Code.exe'");
         public FastProjectForm()
         {
 
@@ -51,32 +51,75 @@ namespace NFM
         {
             string processName = e.NewEvent.Properties["ProcessName"].Value.ToString();
             string processID = Convert.ToInt32(e.NewEvent.Properties["ProcessID"].Value).ToString();
-            if (processName == "Code.exe")
-            {
-                Debug.Print("Process stopped. Name: " + processName + " | ID: " + processID);
-            }
+
+            Debug.Print("Process stopped. Name: " + processName + " | ID: " + processID);
         }
 
-        private void processStart_EventArrived(object sender, EventArrivedEventArgs e)
+        private async void processStart_EventArrived(object sender, EventArrivedEventArgs e)
         {
             string processName = e.NewEvent.Properties["ProcessName"].Value.ToString();
             string processID = Convert.ToInt32(e.NewEvent.Properties["ProcessID"].Value).ToString();
-            if (processName == "Code.exe") {
-                richTextBox1.Text = processName + "-" + processID;
-                Process[] processCode = Process.GetProcessesByName("Code");
-                foreach (Process process in processCode)
-                {
-                    if (!String.IsNullOrEmpty(process.MainWindowTitle))
-                    {
+            string fileID = "";
+            string moduleID = "";
+            string nameFileOpening = "";
+            string folderFileOpening = "";
+            string contentJS = "";
+            string pathFolder = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) + "\\NFM\\FastProject\\";
+            
 
-                        string nameFileOpening = process.MainWindowTitle.Substring(0, process.MainWindowTitle.IndexOf(" - ")).Trim();
+            Process[] processCode = Process.GetProcessesByName("Code");
+
+            foreach (Process process in processCode)
+            {
+                if (!String.IsNullOrEmpty(process.MainWindowTitle))
+                {
+                    string pathFileJS = "";
+                    if (process.MainWindowTitle.Contains(".js"))
+                    {
+                        nameFileOpening = process.MainWindowTitle.Substring(0, process.MainWindowTitle.IndexOf(" - ")).Trim();
                         string tmp = process.MainWindowTitle.Substring(process.MainWindowTitle.IndexOf(" - ") + 3);
-                        string folderFileOpening = tmp.Substring(0, tmp.IndexOf(" - "));
-                        MessageBox.Show(nameFileOpening);
+                        folderFileOpening = tmp.Substring(0, tmp.IndexOf(" - "));
+
+                        fileID = Path.GetFileNameWithoutExtension(nameFileOpening).Substring(0, Path.GetFileNameWithoutExtension(nameFileOpening).IndexOf('_'));
+                        moduleID = Path.GetFileNameWithoutExtension(nameFileOpening).Substring(Path.GetFileNameWithoutExtension(nameFileOpening).IndexOf('_') + 1);
+                        //truyen id de lay content
+                        contentJS = await GetContentModuleFileJS(fileID);
+                        pathFileJS = pathFolder + "\\" + fileID + "_" + moduleID + ".js";
+                        //Debug.Print(moduleID);
                     }
+                    
+                    //if (contentJS != "")
+                    //{
+                    //    //Debug.Print(pathFileJS);
+                    //    string temp = "Ban lua chon: \n Yes: tiep tuc chinh sua file local. \n No: Đồng bộ nội dung mới nhất trên server. \n Cancel: Hủy thao tác.";
+                    //    DialogResult res = MessageBox.Show(temp, "NFM", MessageBoxButtons.YesNoCancel, MessageBoxIcon.Question);
+                    //    if (res == DialogResult.Yes)
+                    //    {
+                    //        pathWatching = pathFolder + moduleID;
+                    //        Watching(pathWatching);
+                    //    }
+                    //    if (res == DialogResult.No)
+                    //    {
+                    //        using (StreamWriter sw = File.CreateText(pathFileJS))
+                    //        {
+                    //            sw.WriteLine(contentJS);
+                    //            pathWatching = pathFolder;
+                    //            Watching(pathFolder);
+                    //        }
+                    //    }
+                    //}
+                    //else
+                    //{
+                    //    // Create a file to write to.
+                    //    using (StreamWriter sw = File.CreateText(pathFileJS))
+                    //    {
+                    //        sw.WriteLine(contentJS);
+                    //    }
+                    //    OpenVisualCode(pathFolder);
+                    //    Watching(pathFolder);
+                    //}
                 }
             }
-
         }
 
         private void FastProjectForm_Load(object sender, EventArgs e)
@@ -464,12 +507,11 @@ namespace NFM
             string fileID = "";
             string fileName = "";
             string moduleID = "";
-            string contentJS = "";
+            
             if (e.ColumnIndex == dgvListModules.Columns["edit_column"].Index && e.RowIndex >= 0)
             {
                 fileID = dgvListModules.Rows[e.RowIndex].Cells[1].Value.ToString();
                 moduleID = dgvListModules.Rows[e.RowIndex].Cells[3].Value.ToString();
-                fileName = dgvListModules.Rows[e.RowIndex].Cells[6].Value.ToString();
             }
 
             try
@@ -480,50 +522,12 @@ namespace NFM
                 {
                     Directory.CreateDirectory(pathFolder);
                 }
-                string pathFileJS = pathFolder + "\\" + fileID + "_" + fileName + ".js";
-
-                contentJS = await GetContentModuleFileJS(fileID);
-                
-                if (contentJS != "")
+                string pathFileJS = pathFolder + "\\" + fileID + "_" + moduleID + ".js";
+                if (!File.Exists(pathFileJS))
                 {
-                    if (!File.Exists(pathFileJS))
-                    {
-                        // Create a file to write to.
-                        using (StreamWriter sw = File.CreateText(pathFileJS))
-                        {
-                            //sw.WriteLine(contentJS);
-                        }
-                        Watching(pathFolder);
-                    }
-                    else
-                    {
-                        string temp = "Ban lua chon: \n Yes: tiep tuc chinh sua file local. \n No: Đồng bộ nội dung mới nhất trên server. \n Cancel: Hủy thao tác.";
-                        DialogResult res = MessageBox.Show(temp, "NFM", MessageBoxButtons.YesNoCancel, MessageBoxIcon.Question);
-                        if (res == DialogResult.Yes)
-                        {
-                            pathWatching = pathFolder;
-                            Watching(pathFolder);
-                        }
-                        if (res == DialogResult.No)
-                        {
-                            using (StreamWriter sw = File.CreateText(pathFileJS))
-                            {
-                                sw.WriteLine(contentJS);
-                                pathWatching = pathFolder;
-                                Watching(pathFolder);
-                            }
-                        }
-                    }
-                }
-                else {
-                    // Create a file to write to.
-                    using (StreamWriter sw = File.CreateText(pathFileJS))
-                    {
-                        sw.WriteLine(contentJS);
-                    }
-                    OpenVisualCode(pathFolder);
+                    File.CreateText(pathFileJS);
                     Watching(pathFolder);
-                }
+                }               
             }
             catch (Exception ex)
             {
