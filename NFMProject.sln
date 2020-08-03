@@ -3,7 +3,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.29905.134
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NFMProject", "NFMProject\NFMProject.csproj", "{9CCBCA04-E1A7-43A0-B626-593004FE9263}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NFM", "NFMProject\NFM.csproj", "{9CCBCA04-E1A7-43A0-B626-593004FE9263}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LoginProject", "Test\LoginProject.csproj", "{77F5BACE-A16C-4A3C-A01F-EBB5BFE15915}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -15,6 +17,10 @@ Global
 		{9CCBCA04-E1A7-43A0-B626-593004FE9263}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{9CCBCA04-E1A7-43A0-B626-593004FE9263}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{9CCBCA04-E1A7-43A0-B626-593004FE9263}.Release|Any CPU.Build.0 = Release|Any CPU
+		{77F5BACE-A16C-4A3C-A01F-EBB5BFE15915}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{77F5BACE-A16C-4A3C-A01F-EBB5BFE15915}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{77F5BACE-A16C-4A3C-A01F-EBB5BFE15915}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{77F5BACE-A16C-4A3C-A01F-EBB5BFE15915}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

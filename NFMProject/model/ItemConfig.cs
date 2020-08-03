@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace NFMProject
+namespace NFM
 {
     public class ItemConfig
     {

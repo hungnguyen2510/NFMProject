@@ -1,4 +1,4 @@
-﻿namespace NFMProject
+﻿namespace NFM
 {
     partial class FastProjectForm
     {
@@ -30,7 +30,7 @@
         {
             this.components = new System.ComponentModel.Container();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FastProjectForm));
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle2 = new System.Windows.Forms.DataGridViewCellStyle();
             this.cboProjectList = new System.Windows.Forms.ComboBox();
             this.systemTray = new System.Windows.Forms.NotifyIcon(this.components);
             this.picState = new System.Windows.Forms.PictureBox();
@@ -39,6 +39,7 @@
             this.panel2 = new System.Windows.Forms.Panel();
             this.dgvListModules = new System.Windows.Forms.DataGridView();
             this.timer1 = new System.Windows.Forms.Timer(this.components);
+            this.richTextBox1 = new System.Windows.Forms.RichTextBox();
             ((System.ComponentModel.ISupportInitialize)(this.picState)).BeginInit();
             this.panel1.SuspendLayout();
             this.panel2.SuspendLayout();
@@ -76,6 +77,7 @@
             // panel1
             // 
             this.panel1.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(26)))), ((int)(((byte)(170)))), ((int)(((byte)(237)))));
+            this.panel1.Controls.Add(this.richTextBox1);
             this.panel1.Controls.Add(this.label1);
             this.panel1.Controls.Add(this.cboProjectList);
             this.panel1.Controls.Add(this.picState);
@@ -112,14 +114,14 @@
             this.dgvListModules.AutoSizeRowsMode = System.Windows.Forms.DataGridViewAutoSizeRowsMode.DisplayedCells;
             this.dgvListModules.BackgroundColor = System.Drawing.SystemColors.Control;
             this.dgvListModules.BorderStyle = System.Windows.Forms.BorderStyle.None;
-            dataGridViewCellStyle1.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle1.BackColor = System.Drawing.SystemColors.Window;
-            dataGridViewCellStyle1.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            dataGridViewCellStyle1.ForeColor = System.Drawing.SystemColors.ControlText;
-            dataGridViewCellStyle1.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-            dataGridViewCellStyle1.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            dataGridViewCellStyle1.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
-            this.dgvListModules.DefaultCellStyle = dataGridViewCellStyle1;
+            dataGridViewCellStyle2.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle2.BackColor = System.Drawing.SystemColors.Window;
+            dataGridViewCellStyle2.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            dataGridViewCellStyle2.ForeColor = System.Drawing.SystemColors.ControlText;
+            dataGridViewCellStyle2.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+            dataGridViewCellStyle2.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle2.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
+            this.dgvListModules.DefaultCellStyle = dataGridViewCellStyle2;
             this.dgvListModules.Dock = System.Windows.Forms.DockStyle.Fill;
             this.dgvListModules.GridColor = System.Drawing.SystemColors.ActiveCaption;
             this.dgvListModules.Location = new System.Drawing.Point(0, 0);
@@ -132,6 +134,14 @@
             this.dgvListModules.Size = new System.Drawing.Size(1235, 567);
             this.dgvListModules.TabIndex = 1;
             this.dgvListModules.CellContentClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.dgvListModules_CellContentClick);
+            // 
+            // richTextBox1
+            // 
+            this.richTextBox1.Location = new System.Drawing.Point(543, 7);
+            this.richTextBox1.Name = "richTextBox1";
+            this.richTextBox1.Size = new System.Drawing.Size(529, 53);
+            this.richTextBox1.TabIndex = 4;
+            this.richTextBox1.Text = "";
             // 
             // FastProjectForm
             // 
@@ -167,5 +177,6 @@
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.Timer timer1;
         private System.Windows.Forms.DataGridView dgvListModules;
+        private System.Windows.Forms.RichTextBox richTextBox1;
     }
 }

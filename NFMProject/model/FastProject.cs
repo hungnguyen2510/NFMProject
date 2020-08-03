@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace NFMProject.model
+namespace NFM.model
 {
     public class Project
     {
@@ -22,9 +22,13 @@ namespace NFMProject.model
 
     public class Module
     {
-        public string id { get; set; }
+        public string fileID { get; set; }
+        public string ProjectID { get; set; }
         public string ModuleID { get; set; }
+        public string ProjectName { get; set; }
         public string ModuleName { get; set; }
+        public string FileName { get; set; }
+        public string UpdateTime { get; set; }
     }
 
     public class ListProject

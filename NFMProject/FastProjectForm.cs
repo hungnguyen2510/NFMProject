@@ -1,6 +1,6 @@
 ﻿using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
-using NFMProject.model;
+using NFM.model;
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -12,35 +12,101 @@ using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-using Module = NFMProject.model.Module;
+using System.Management;
+using LoginProject;
+using Windows.UI.Xaml.Documents;
+using Module = NFM.model.Module;
 
-namespace NFMProject
+namespace NFM
 {
     public partial class FastProjectForm : Form
     {
-        static string tokenLogin = "";
+        static string tokenLogin= "";
         public static string pathWatching = "";
         string pathConfig = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) + "\\NFM\\Config\\";
+        string pathKey = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) + "\\NFM\\Key\\";
         bool checkWatching = false;
-        bool checkFormActive = false;
         static string content = "";
+        bool checkVSCodeRun = false;
+        ManagementEventWatcher startWatch = new ManagementEventWatcher("SELECT * FROM Win32_ProcessStartTrace");
+        ManagementEventWatcher processStop = new ManagementEventWatcher("SELECT * FROM Win32_ProcessStopTrace");
         public FastProjectForm()
         {
+
             InitializeComponent();
+            
+            try
+            {
+                startWatch.EventArrived += new EventArrivedEventHandler(processStart_EventArrived);
+                startWatch.Start();
+                processStop.EventArrived += new EventArrivedEventHandler(processStop_EventArrived);
+                processStop.Start();
+            }
+            catch (Exception ex) {
+                MessageBox.Show(ex.Message);
+            }
+        }
+
+        private void processStop_EventArrived(object sender, EventArrivedEventArgs e)
+        {
+            string processName = e.NewEvent.Properties["ProcessName"].Value.ToString();
+            string processID = Convert.ToInt32(e.NewEvent.Properties["ProcessID"].Value).ToString();
+            if (processName == "Code.exe")
+            {
+                Debug.Print("Process stopped. Name: " + processName + " | ID: " + processID);
+            }
+        }
+
+        private void processStart_EventArrived(object sender, EventArrivedEventArgs e)
+        {
+            string processName = e.NewEvent.Properties["ProcessName"].Value.ToString();
+            string processID = Convert.ToInt32(e.NewEvent.Properties["ProcessID"].Value).ToString();
+            if (processName == "Code.exe") {
+                richTextBox1.Text = processName + "-" + processID;
+                Process[] processCode = Process.GetProcessesByName("Code");
+                foreach (Process process in processCode)
+                {
+                    if (!String.IsNullOrEmpty(process.MainWindowTitle))
+                    {
+
+                        string nameFileOpening = process.MainWindowTitle.Substring(0, process.MainWindowTitle.IndexOf(" - ")).Trim();
+                        string tmp = process.MainWindowTitle.Substring(process.MainWindowTitle.IndexOf(" - ") + 3);
+                        string folderFileOpening = tmp.Substring(0, tmp.IndexOf(" - "));
+                        MessageBox.Show(nameFileOpening);
+                    }
+                }
+            }
+
         }
 
         private void FastProjectForm_Load(object sender, EventArgs e)
         {
-            if (Program.token != "")
+            DirectoryInfo d = new DirectoryInfo(pathKey);
+            FileInfo[] Files = d.GetFiles("*.json");
+            string strPathKey = "";
+            foreach (FileInfo file in Files)
             {
-                tokenLogin = Program.token;
-                Watching(Program.pathWatchingConfig);
+                strPathKey = file.Name;
             }
-            else {
-                tokenLogin = LoginWebViewForm.token;
-                LoginWebViewForm.ActiveForm.Hide();
+            if (strPathKey.Trim() != "")
+            {
+                JObject jOToken = ReadFileJSON(pathKey+strPathKey);
+                tokenLogin = jOToken["token"].ToString();
+                
             }
             GetListProject();
+        }
+        public JObject ReadFileJSON(string path)
+        {
+            JObject o1 = JObject.Parse(File.ReadAllText(path));
+            JObject o2 = new JObject();
+
+            using (StreamReader file = File.OpenText(path))
+            using (JsonTextReader reader = new JsonTextReader(file))
+            {
+                o2 = (JObject)JToken.ReadFrom(reader);
+            }
+            return o2;
         }
 
         private void FastProjectForm_FormClosed(object sender, FormClosedEventArgs e)
@@ -79,11 +145,11 @@ namespace NFMProject
                 }
                 else
                 {
-                    Debug.Print("Internal server Error");
+                    Debug.Print("GetListProject: Internal server Error");
                 }
             }
             catch (Exception ex) {
-                MessageBox.Show(ex.Message, "NFM", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show(ex.Message, "GetListProject", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
         public class ListtoDataTable
@@ -123,8 +189,13 @@ namespace NFMProject
                 client.DefaultRequestHeaders.Accept.Clear();
                 client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
                 client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", tokenLogin);
-                //GET Method  
-                HttpResponseMessage response = await client.GetAsync("fp/admin_modulelist?pid=" + projectID);
+                //GET Method
+                JObject jObject = new JObject();
+                jObject["projectID"] = projectID;
+                StringContent post = new StringContent(JsonConvert.SerializeObject(jObject), Encoding.UTF8, "application/json");
+                HttpResponseMessage response = await client.PostAsync("fp/admin_FileList/code", post);
+
+                //HttpResponseMessage response = await client.GetAsync("fp/admin_FileList/code" + projectID);
 
                 if (response.IsSuccessStatusCode)
                 {
@@ -134,9 +205,13 @@ namespace NFMProject
                     foreach (var item in items)
                     {                      
                         Module module = new Module();
-                        module.id = item["id"].ToString();
+                        module.fileID = item["fileID"].ToString();
+                        module.ProjectID = item["ProjectID"].ToString();
                         module.ModuleID = item["ModuleID"].ToString();
-                        module.ModuleName = item["ModuleName"].ToString();
+                        module.ProjectName = item["ProjectName"].ToString();
+                        module.ModuleName = item["moduleName"].ToString();
+                        module.FileName = item["FileName"].ToString();
+                        module.UpdateTime = item["UpdateTime"].ToString();
                         if (module.ModuleID == "jsoneditor") {
                             break;
                         }
@@ -162,52 +237,54 @@ namespace NFMProject
                 }
                 else
                 {
-                    Debug.Print("Internal server Error");
+                    Debug.Print("GetListModule Internal server Error");
                 }
             }
             catch (Exception ex)
             {
-                MessageBox.Show(ex.Message, "NFM", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show(ex.Message, "GetListModule", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
 
 
-        private async Task<String> GetContentModuleFileJS(string moduleID)
+        private async Task<String> GetContentModuleFileJS(string fileID)
         {
             string contentJS = "";
             try
             {
                 HttpClient client = new HttpClient();
-                client.BaseAddress = new Uri("https://tapi.lhu.edu.vn/");
+                client.BaseAddress = new Uri("http://file.lhu.edu.vn/");
                 client.DefaultRequestHeaders.Accept.Clear();
                 client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
                 client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", tokenLogin);
                 //GET Method  
-                HttpResponseMessage response = await client.GetAsync("fp/obj/admin_moduledata/module-code/fp/" + moduleID);
+                HttpResponseMessage response = await client.GetAsync("fp/import/" + fileID);
 
                 if (response.IsSuccessStatusCode)
                 {
                     var res = await response.Content.ReadAsStringAsync();
-                    JObject data = JObject.Parse(res.ToString());
-                    contentJS = data["data"]["moduleJS"].ToString();
+                    contentJS = res.ToString();
+                    //JObject data = JObject.Parse(res.ToString());
+                    //contentJS = data["data"]["moduleJS"].ToString();
 
                     if (contentJS.Trim() != "")
                     {
                         return contentJS;
                     }
-                    else {
+                    else
+                    {
                         contentJS = "";
                     }
                 }
                 else
                 {
-                    Debug.Print("Internal server Error");
+                    Debug.Print("GetContentModuleFileJS Internal server Error");
                 }
                 
             }
             catch (Exception ex)
             {
-                MessageBox.Show(ex.Message, "NFM", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show(ex.Message, "GetContentModuleFileJS", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
             return contentJS;
 
@@ -266,13 +343,14 @@ namespace NFMProject
                         systemTray.ShowBalloonTip(500);
                     }
                 }
-                else {
+                else
+                {
                     MessageBox.Show("TEST");
                 }
             }
             catch (Exception ex)
             {
-                MessageBox.Show(ex.Message, "NFM", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show(ex.Message, "Watching", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
 
@@ -285,7 +363,6 @@ namespace NFMProject
             fileSystemWatcher.Renamed += FileSystemWatcher_Renamed;
             fileSystemWatcher.Path = path;
             fileSystemWatcher.EnableRaisingEvents = true;
-
             WriteToFile("Watching....");
         }
 
@@ -318,6 +395,7 @@ namespace NFMProject
             catch (Exception ex)
             {
                 //MessageBox.Show(ex.Message, "NFM", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                Debug.Print("WriteToFile" + ex.Message);
             }
         }
 
@@ -331,7 +409,7 @@ namespace NFMProject
             WriteToFile($"FileSystemWatcher_Deleted:  {e.Name} -- {DateTime.Now}");
         }
 
-        private static async void PostContent(string data, string moduleID) 
+        private static async void PostContent(string FileContent, string FileID) 
         {
             try
             {
@@ -342,9 +420,10 @@ namespace NFMProject
                 client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", tokenLogin);
                 //GET Method
                 JObject jObject = new JObject();
-                jObject["data"] = data;
+                jObject["FileID"] = FileID;
+                jObject["FileContent"] = FileContent;
                 StringContent post = new StringContent(JsonConvert.SerializeObject(jObject), Encoding.UTF8, "application/json");
-                HttpResponseMessage response = await client.PostAsync("fp/obj/admin_editorupdate/module-code/fp/"+ moduleID, post);
+                HttpResponseMessage response = await client.PostAsync("fp/admin_FileUpdate/uploadcontent", post);
             }
             catch (Exception ex)
             {
@@ -370,14 +449,9 @@ namespace NFMProject
             {
                 await TaskDelay(1000);
                 WriteToFile($"FileSystemWatcher_Changed:  {e.Name} -- {content} -- {DateTime.Now}");
-                //MessageBox.Show(Path.GetFileNameWithoutExtension(e.Name));
                 PostContent(content, Path.GetFileNameWithoutExtension(e.Name));
             }
 
-        }
-        async static Task PausaComTaskDelay()
-        {
-            await Task.Delay(1000);
         }
 
         private static void FileSystemWatcher_Created(object sender, FileSystemEventArgs e)
@@ -387,22 +461,29 @@ namespace NFMProject
 
         private async void dgvListModules_CellContentClick(object sender, DataGridViewCellEventArgs e)
         {
+            string fileID = "";
+            string fileName = "";
             string moduleID = "";
             string contentJS = "";
             if (e.ColumnIndex == dgvListModules.Columns["edit_column"].Index && e.RowIndex >= 0)
             {
-                moduleID = dgvListModules.Rows[e.RowIndex].Cells[2].Value.ToString();
+                fileID = dgvListModules.Rows[e.RowIndex].Cells[1].Value.ToString();
+                moduleID = dgvListModules.Rows[e.RowIndex].Cells[3].Value.ToString();
+                fileName = dgvListModules.Rows[e.RowIndex].Cells[6].Value.ToString();
             }
 
             try
             {
                 string pathFolder = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) + "\\NFM\\FastProject\\" + moduleID;
+                
                 if (!Directory.Exists(pathFolder))
                 {
                     Directory.CreateDirectory(pathFolder);
                 }
-                string pathFileJS = pathFolder + "\\" + moduleID + ".js";
-                contentJS = await GetContentModuleFileJS(moduleID);
+                string pathFileJS = pathFolder + "\\" + fileID + "_" + fileName + ".js";
+
+                contentJS = await GetContentModuleFileJS(fileID);
+                
                 if (contentJS != "")
                 {
                     if (!File.Exists(pathFileJS))
@@ -410,9 +491,8 @@ namespace NFMProject
                         // Create a file to write to.
                         using (StreamWriter sw = File.CreateText(pathFileJS))
                         {
-                            sw.WriteLine(contentJS);
+                            //sw.WriteLine(contentJS);
                         }
-                        //OpenVisualCode(pathFolder);
                         Watching(pathFolder);
                     }
                     else
@@ -421,7 +501,6 @@ namespace NFMProject
                         DialogResult res = MessageBox.Show(temp, "NFM", MessageBoxButtons.YesNoCancel, MessageBoxIcon.Question);
                         if (res == DialogResult.Yes)
                         {
-                            //OpenVisualCode(pathFolder);
                             pathWatching = pathFolder;
                             Watching(pathFolder);
                         }
@@ -430,7 +509,6 @@ namespace NFMProject
                             using (StreamWriter sw = File.CreateText(pathFileJS))
                             {
                                 sw.WriteLine(contentJS);
-                                //OpenVisualCode(pathFolder);
                                 pathWatching = pathFolder;
                                 Watching(pathFolder);
                             }
@@ -449,7 +527,7 @@ namespace NFMProject
             }
             catch (Exception ex)
             {
-                MessageBox.Show(ex.Message, "NFM", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show(ex.Message, "dgvListModules_CellContentClick", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
 
@@ -487,43 +565,48 @@ namespace NFMProject
         }
         private void FastProjectForm_Activated(object sender, EventArgs e)
         {
-            try
-            {
-                if (checkFormActive)
-                {
-                    Process[] processlist = Process.GetProcesses();
-                    Process processCode = new Process();
-                    foreach (Process process in processlist)
-                    {
-                        if (!String.IsNullOrEmpty(process.MainWindowTitle))
-                        {
-                            if (process.ProcessName.ToLower() == "code")
-                            {
-                                processCode = process;
-                                break;
-                            }
-                        }
-                    }
-                    string[] arrListStr = processCode.MainWindowTitle.Split(new char[] { '-' });
-                    string nameFileOpening = arrListStr[0].Trim();
-                    string folderFileOpening = arrListStr[1].Trim();
-                    Debug.Print(nameFileOpening);
-                    Debug.Print(folderFileOpening);
-                }
-                checkFormActive = false;
-            }
-            catch (Exception ex) {
-                Debug.Print(ex.Message);
-                MessageBox.Show("Bạn chưa mở VSCode");
-            }          
-            //Debug.Print(arrListStr[0] + "-" + arrListStr[1]);
+            //try
+            //{
+            //    //Computer.Computer computer = new Computer.Computer();
+            //    //Debug.Print(computer.UUID());
+            //    if (cboProjectList.SelectedValue != null)
+            //    {
+            //        GetListModule(cboProjectList.SelectedValue.ToString());
+            //    }
+
+            //    if (checkWatching)
+            //    {
+            //        if (checkFormActive)
+            //        {
+            //            //Process[] processlist = Process.GetProcesses();
+            //            Process[] processCode = Process.GetProcessesByName("Code");
+            //            foreach (Process process in processCode)
+            //            {
+            //                if (!String.IsNullOrEmpty(process.MainWindowTitle))
+            //                {
+
+            //                    string nameFileOpening = process.MainWindowTitle.Substring(0, process.MainWindowTitle.IndexOf(" - ")).Trim();
+            //                    string tmp = process.MainWindowTitle.Substring(process.MainWindowTitle.IndexOf(" - ") + 3);
+            //                    string folderFileOpening = tmp.Substring(0, tmp.IndexOf(" - "));
+            //                    //Debug.Print(folderFileOpening);
+            //                    //Debug.Print(nameFileOpening);
+            //                }
+            //            }
+            //        }
+            //        checkFormActive = false;
+            //    }
+            //}
+            //catch (Exception ex)
+            //{
+            //    Debug.Print(ex.Message);
+            //}
         }
 
-        private async void FastProjectForm_Deactivate(object sender, EventArgs e)
-        {
-            Debug.Print("Deactive");
-            await TaskDelay(5000);
-            checkFormActive = true;
+        private void FastProjectForm_Deactivate(object sender, EventArgs e)
+        {            
+            //Debug.Print("Deactive");
+            //await TaskDelay(5000);
+            //checkFormActive = true;
         }
     }
 }

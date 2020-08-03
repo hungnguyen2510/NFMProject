@@ -1,4 +1,4 @@
-﻿namespace NFMProject
+﻿namespace NFM
 {
     partial class MainForm
     {

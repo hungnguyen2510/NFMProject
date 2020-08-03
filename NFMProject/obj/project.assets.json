@@ -171,6 +171,20 @@
         "build": {
           "build/net461/System.Runtime.WindowsRuntime.UI.Xaml.targets": {}
         }
+      },
+      "LoginProject/1.0.0": {
+        "type": "project",
+        "framework": ".NETFramework,Version=v4.7.2",
+        "dependencies": {
+          "Microsoft.Toolkit.Forms.UI.Controls.WebView": "6.1.1",
+          "Newtonsoft.Json": "12.0.3"
+        },
+        "compile": {
+          "bin/placeholder/LoginProject.dll": {}
+        },
+        "runtime": {
+          "bin/placeholder/LoginProject.dll": {}
+        }
       }
     },
     ".NETFramework,Version=v4.7.2/win": {
@@ -342,6 +356,20 @@
         },
         "build": {
           "build/net461/System.Runtime.WindowsRuntime.UI.Xaml.targets": {}
+        }
+      },
+      "LoginProject/1.0.0": {
+        "type": "project",
+        "framework": ".NETFramework,Version=v4.7.2",
+        "dependencies": {
+          "Microsoft.Toolkit.Forms.UI.Controls.WebView": "6.1.1",
+          "Newtonsoft.Json": "12.0.3"
+        },
+        "compile": {
+          "bin/placeholder/LoginProject.dll": {}
+        },
+        "runtime": {
+          "bin/placeholder/LoginProject.dll": {}
         }
       }
     },
@@ -515,6 +543,20 @@
         "build": {
           "build/net461/System.Runtime.WindowsRuntime.UI.Xaml.targets": {}
         }
+      },
+      "LoginProject/1.0.0": {
+        "type": "project",
+        "framework": ".NETFramework,Version=v4.7.2",
+        "dependencies": {
+          "Microsoft.Toolkit.Forms.UI.Controls.WebView": "6.1.1",
+          "Newtonsoft.Json": "12.0.3"
+        },
+        "compile": {
+          "bin/placeholder/LoginProject.dll": {}
+        },
+        "runtime": {
+          "bin/placeholder/LoginProject.dll": {}
+        }
       }
     },
     ".NETFramework,Version=v4.7.2/win-x86": {
@@ -686,6 +728,20 @@
         },
         "build": {
           "build/net461/System.Runtime.WindowsRuntime.UI.Xaml.targets": {}
+        }
+      },
+      "LoginProject/1.0.0": {
+        "type": "project",
+        "framework": ".NETFramework,Version=v4.7.2",
+        "dependencies": {
+          "Microsoft.Toolkit.Forms.UI.Controls.WebView": "6.1.1",
+          "Newtonsoft.Json": "12.0.3"
+        },
+        "compile": {
+          "bin/placeholder/LoginProject.dll": {}
+        },
+        "runtime": {
+          "bin/placeholder/LoginProject.dll": {}
         }
       }
     }
@@ -1066,10 +1122,16 @@
         "useSharedDesignerContext.txt",
         "version.txt"
       ]
+    },
+    "LoginProject/1.0.0": {
+      "type": "project",
+      "path": "../Test/LoginProject.csproj",
+      "msbuildProject": "../Test/LoginProject.csproj"
     }
   },
   "projectFileDependencyGroups": {
     ".NETFramework,Version=v4.7.2": [
+      "LoginProject >= 1.0.0",
       "Microsoft.AspNet.WebApi.Client >= 5.2.7",
       "Microsoft.Toolkit.Forms.UI.Controls.WebView >= 6.1.1",
       "Newtonsoft.Json >= 12.0.3"
@@ -1081,9 +1143,9 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\Hung Mer\\Source\\Repos\\NFMProject\\NFMProject\\NFMProject.csproj",
-      "projectName": "NFMProject",
-      "projectPath": "C:\\Users\\Hung Mer\\Source\\Repos\\NFMProject\\NFMProject\\NFMProject.csproj",
+      "projectUniqueName": "C:\\Users\\Hung Mer\\Source\\Repos\\NFMProject\\NFMProject\\NFM.csproj",
+      "projectName": "NFM",
+      "projectPath": "C:\\Users\\Hung Mer\\Source\\Repos\\NFMProject\\NFMProject\\NFM.csproj",
       "packagesPath": "C:\\Users\\Hung Mer\\.nuget\\packages\\",
       "outputPath": "C:\\Users\\Hung Mer\\Source\\Repos\\NFMProject\\NFMProject\\obj\\",
       "projectStyle": "PackageReference",
@@ -1101,7 +1163,11 @@
       },
       "frameworks": {
         "net472": {
-          "projectReferences": {}
+          "projectReferences": {
+            "C:\\Users\\Hung Mer\\Source\\Repos\\NFMProject\\Test\\LoginProject.csproj": {
+              "projectPath": "C:\\Users\\Hung Mer\\Source\\Repos\\NFMProject\\Test\\LoginProject.csproj"
+            }
+          }
         }
       }
     },

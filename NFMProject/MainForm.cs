@@ -7,7 +7,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
-namespace NFMProject
+namespace NFM
 {
     public partial class MainForm : Form
     {
@@ -229,7 +229,7 @@ namespace NFMProject
                         }
                         string filepathConfig = pathConfig + "\\config.json";
                         Config cf = new Config();
-                        cf.token = LoginWebViewForm.token;
+                        cf.token = LoginProject.LoginWebViewForm.token;
                         cf.pathWatching = pathWatching;
                         string json = JsonConvert.SerializeObject(cf);
 
