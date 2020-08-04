@@ -17,6 +17,7 @@ using LoginProject;
 using Windows.UI.Xaml.Documents;
 using Module = NFM.model.Module;
 using System.Threading;
+using System.Drawing;
 
 namespace NFM
 {
@@ -28,102 +29,35 @@ namespace NFM
         string pathKey = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) + "\\NFM\\Key\\";
         bool checkWatching = false;
         static string content = "";
-        ManagementEventWatcher startWatch = new ManagementEventWatcher("SELECT * FROM Win32_ProcessStartTrace Where ProcessName='Code.exe'");
+        string UUID = "";
+        string statusCodeUpdate = "";
+
+        ManagementEventWatcher processStart = new ManagementEventWatcher("SELECT * FROM Win32_ProcessStartTrace Where ProcessName='Code.exe'");
         ManagementEventWatcher processStop = new ManagementEventWatcher("SELECT * FROM Win32_ProcessStopTrace Where ProcessName='Code.exe'");
         public FastProjectForm()
         {
 
             InitializeComponent();
-            
+
             try
             {
-                startWatch.EventArrived += new EventArrivedEventHandler(processStart_EventArrived);
-                startWatch.Start();
+                Computer.Computer computer = new Computer.Computer();
+                UUID = computer.UUID();
+                processStart.EventArrived += new EventArrivedEventHandler(processStart_EventArrived);
+                processStart.Start();
                 processStop.EventArrived += new EventArrivedEventHandler(processStop_EventArrived);
                 processStop.Start();
             }
-            catch (Exception ex) {
-                MessageBox.Show(ex.Message);
-            }
-        }
-
-        private void processStop_EventArrived(object sender, EventArrivedEventArgs e)
-        {
-            string processName = e.NewEvent.Properties["ProcessName"].Value.ToString();
-            string processID = Convert.ToInt32(e.NewEvent.Properties["ProcessID"].Value).ToString();
-
-            Debug.Print("Process stopped. Name: " + processName + " | ID: " + processID);
-        }
-
-        private async void processStart_EventArrived(object sender, EventArrivedEventArgs e)
-        {
-            string processName = e.NewEvent.Properties["ProcessName"].Value.ToString();
-            string processID = Convert.ToInt32(e.NewEvent.Properties["ProcessID"].Value).ToString();
-            string fileID = "";
-            string moduleID = "";
-            string nameFileOpening = "";
-            string folderFileOpening = "";
-            string contentJS = "";
-            string pathFolder = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) + "\\NFM\\FastProject\\";
-            
-
-            Process[] processCode = Process.GetProcessesByName("Code");
-
-            foreach (Process process in processCode)
+            catch (Exception ex)
             {
-                if (!String.IsNullOrEmpty(process.MainWindowTitle))
-                {
-                    string pathFileJS = "";
-                    if (process.MainWindowTitle.Contains(".js"))
-                    {
-                        nameFileOpening = process.MainWindowTitle.Substring(0, process.MainWindowTitle.IndexOf(" - ")).Trim();
-                        string tmp = process.MainWindowTitle.Substring(process.MainWindowTitle.IndexOf(" - ") + 3);
-                        folderFileOpening = tmp.Substring(0, tmp.IndexOf(" - "));
-
-                        fileID = Path.GetFileNameWithoutExtension(nameFileOpening).Substring(0, Path.GetFileNameWithoutExtension(nameFileOpening).IndexOf('_'));
-                        moduleID = Path.GetFileNameWithoutExtension(nameFileOpening).Substring(Path.GetFileNameWithoutExtension(nameFileOpening).IndexOf('_') + 1);
-                        //truyen id de lay content
-                        contentJS = await GetContentModuleFileJS(fileID);
-                        pathFileJS = pathFolder + "\\" + fileID + "_" + moduleID + ".js";
-                        //Debug.Print(moduleID);
-                    }
-                    
-                    //if (contentJS != "")
-                    //{
-                    //    //Debug.Print(pathFileJS);
-                    //    string temp = "Ban lua chon: \n Yes: tiep tuc chinh sua file local. \n No: Đồng bộ nội dung mới nhất trên server. \n Cancel: Hủy thao tác.";
-                    //    DialogResult res = MessageBox.Show(temp, "NFM", MessageBoxButtons.YesNoCancel, MessageBoxIcon.Question);
-                    //    if (res == DialogResult.Yes)
-                    //    {
-                    //        pathWatching = pathFolder + moduleID;
-                    //        Watching(pathWatching);
-                    //    }
-                    //    if (res == DialogResult.No)
-                    //    {
-                    //        using (StreamWriter sw = File.CreateText(pathFileJS))
-                    //        {
-                    //            sw.WriteLine(contentJS);
-                    //            pathWatching = pathFolder;
-                    //            Watching(pathFolder);
-                    //        }
-                    //    }
-                    //}
-                    //else
-                    //{
-                    //    // Create a file to write to.
-                    //    using (StreamWriter sw = File.CreateText(pathFileJS))
-                    //    {
-                    //        sw.WriteLine(contentJS);
-                    //    }
-                    //    OpenVisualCode(pathFolder);
-                    //    Watching(pathFolder);
-                    //}
-                }
+                MessageBox.Show(ex.Message);
             }
         }
 
         private void FastProjectForm_Load(object sender, EventArgs e)
         {
+            
+            Debug.Print(UUID);
             DirectoryInfo d = new DirectoryInfo(pathKey);
             FileInfo[] Files = d.GetFiles("*.json");
             string strPathKey = "";
@@ -133,12 +67,110 @@ namespace NFM
             }
             if (strPathKey.Trim() != "")
             {
-                JObject jOToken = ReadFileJSON(pathKey+strPathKey);
+                JObject jOToken = ReadFileJSON(pathKey + strPathKey);
                 tokenLogin = jOToken["token"].ToString();
-                
+
             }
             GetListProject();
         }
+
+        private void processStop_EventArrived(object sender, EventArrivedEventArgs e)
+        {
+            string processName = e.NewEvent.Properties["ProcessName"].Value.ToString();
+            string processID = Convert.ToInt32(e.NewEvent.Properties["ProcessID"].Value).ToString();
+            //Debug.Print("Process stopped. Name: " + processName + " | ID: " + processID);
+            processStop.EventArrived -= new EventArrivedEventHandler(processStop_EventArrived);
+            processStart.EventArrived += new EventArrivedEventHandler(processStart_EventArrived);
+            
+        }
+        private async void processStart_EventArrived(object sender, EventArrivedEventArgs e)
+        {
+            string fileID = "";
+            string moduleID = "";
+            string nameFileOpening = "";
+            string folderFileOpening = "";
+            string contentJS = "";
+            string contentJSLocal = "";
+            string pathFileJS = "";
+            string processName = e.NewEvent.Properties["ProcessName"].Value.ToString();
+            string processID = Convert.ToInt32(e.NewEvent.Properties["ProcessID"].Value).ToString();
+            string pathFolder = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) + "\\NFM\\FastProject\\";
+            //Debug.Print(processName);
+
+            Process[] processCode = Process.GetProcessesByName("Code");
+
+            try
+            {
+                foreach (Process process in processCode)
+                {
+                    if (!String.IsNullOrEmpty(process.MainWindowTitle))
+                    {
+                        if (process.MainWindowTitle.Contains(".js"))
+                        {
+                            nameFileOpening = process.MainWindowTitle.Substring(0, process.MainWindowTitle.IndexOf(" - ")).Trim();
+                            string tmp = process.MainWindowTitle.Substring(process.MainWindowTitle.IndexOf(" - ") + 3);
+                            folderFileOpening = tmp.Substring(0, tmp.IndexOf(" - "));
+
+                            fileID = Path.GetFileNameWithoutExtension(nameFileOpening).Substring(0, Path.GetFileNameWithoutExtension(nameFileOpening).IndexOf('_'));
+                            moduleID = Path.GetFileNameWithoutExtension(nameFileOpening).Substring(Path.GetFileNameWithoutExtension(nameFileOpening).IndexOf('_') + 1);
+                            //truyen id de lay content
+                            contentJS = await GetContentModuleFileJS(fileID);
+                            pathFileJS = pathFolder + "\\" + moduleID + "\\" + fileID + "_" + moduleID + ".js";
+                        }
+                        else
+                        {
+                            Debug.Print("ex");
+                        }
+
+                    }
+                }
+                Debug.Print("pathFileJS: " + pathFileJS);
+                if (pathFileJS != "")
+                {
+                    contentJSLocal = File.ReadAllText(pathFileJS);
+                    Debug.Print("contentJSLocal: " + contentJSLocal);
+                    processStart.EventArrived -= new EventArrivedEventHandler(processStart_EventArrived);
+                    processStop.EventArrived += new EventArrivedEventHandler(processStop_EventArrived);
+                    if (contentJSLocal.Trim() == "")
+                    {
+                        using (StreamWriter sw = File.CreateText(pathFileJS))
+                        {
+                            sw.WriteLine(contentJS);
+                        }
+                    }
+                    //else
+                    //{
+                    //string temp = "Ban lua chon: \n Yes: tiep tuc chinh sua file local. \n No: Đồng bộ nội dung mới nhất trên server. \n Cancel: Hủy thao tác.";
+                    //DialogResult res = MessageBox.Show(temp, "NFM", MessageBoxButtons.YesNoCancel, MessageBoxIcon.Question);
+                    //if (res == DialogResult.Yes)
+                    //{
+                    //    pathWatching = pathFolder + moduleID;
+                    //    //Watching(pathWatching);
+                    //}
+                    //if (res == DialogResult.No)
+                    //{
+                    //    using (StreamWriter sw = File.CreateText(pathFileJS))
+                    //    {
+                    //        sw.WriteLine(contentJS);
+                    //        pathWatching = pathFolder;
+                    //        //Watching(pathFolder);
+                    //    }
+                    //}
+                    ////}
+                    if (this.WindowState == FormWindowState.Minimized)
+                    {
+                        pathWatching = pathFolder + moduleID;
+                        Debug.Print(pathWatching);
+                        Watching(pathWatching);
+                        //OpenVisualCode(pathWatching);
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Debug.Print(ex.Message);
+            }
+        }     
         public JObject ReadFileJSON(string path)
         {
             JObject o1 = JObject.Parse(File.ReadAllText(path));
@@ -361,7 +393,6 @@ namespace NFM
                 }
                 if (pathWatching != "")
                 {
-
                     string filepathConfig = pathConfig + "\\config.json";
                     Config cf = new Config();
                     cf.token = tokenLogin;
@@ -372,13 +403,12 @@ namespace NFM
                         sw.WriteLine(json);
                     }
                     checkWatching = true;
-                    picState.Visible = true;
+                    //picState.Visible = true;
                     this.WindowState = FormWindowState.Minimized;
                     if (this.WindowState == FormWindowState.Minimized)
-                    {
-                        OpenVisualCode(pathWatching);
+                    {                       
                         systemTray.Visible = true;
-                        WriteToFile("Service is started at " + pathWatching + " ---- " + DateTime.Now);
+                        //WriteToFile("Service is started at " + pathWatching + " ---- " + DateTime.Now);
                         CreateFileWatcher(pathWatching);
                         systemTray.Text = "Watching..." + pathWatching;
                         systemTray.BalloonTipTitle = "NFM System";
@@ -393,7 +423,7 @@ namespace NFM
             }
             catch (Exception ex)
             {
-                MessageBox.Show(ex.Message, "Watching", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                //MessageBox.Show(ex.Message, "Watching", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
 
@@ -452,7 +482,7 @@ namespace NFM
             WriteToFile($"FileSystemWatcher_Deleted:  {e.Name} -- {DateTime.Now}");
         }
 
-        private static async void PostContent(string FileContent, string FileID) 
+        private async void PostContent(string FileContent, string FileID) 
         {
             try
             {
@@ -467,14 +497,15 @@ namespace NFM
                 jObject["FileContent"] = FileContent;
                 StringContent post = new StringContent(JsonConvert.SerializeObject(jObject), Encoding.UTF8, "application/json");
                 HttpResponseMessage response = await client.PostAsync("fp/admin_FileUpdate/uploadcontent", post);
+                statusCodeUpdate = response.StatusCode.ToString();
             }
             catch (Exception ex)
             {
-                MessageBox.Show(ex.Message, "NFM",MessageBoxButtons.OK,MessageBoxIcon.Error);
+                //MessageBox.Show(ex.Message, "NFM",MessageBoxButtons.OK,MessageBoxIcon.Error);
             }
         }
 
-        private static async void FileSystemWatcher_Changed(object sender, FileSystemEventArgs e)
+        private async void FileSystemWatcher_Changed(object sender, FileSystemEventArgs e)
         {
             string path = @e.FullPath;
             await TaskDelay(1000);
@@ -485,16 +516,15 @@ namespace NFM
             }           
             if (content.Trim() == "")
             {
-                WriteToFile($"FileSystemWatcher_Changed:  {e.Name} -- {""} -- {DateTime.Now}");
+                //WriteToFile($"FileSystemWatcher_Changed:  {e.Name} -- {""} -- {DateTime.Now}");
                 PostContent("", Path.GetFileNameWithoutExtension(e.Name));
             }
             else
             {
                 await TaskDelay(1000);
-                WriteToFile($"FileSystemWatcher_Changed:  {e.Name} -- {content} -- {DateTime.Now}");
+                //WriteToFile($"FileSystemWatcher_Changed:  {e.Name} -- {content} -- {DateTime.Now}");
                 PostContent(content, Path.GetFileNameWithoutExtension(e.Name));
             }
-
         }
 
         private static void FileSystemWatcher_Created(object sender, FileSystemEventArgs e)
@@ -527,7 +557,14 @@ namespace NFM
                 {
                     File.CreateText(pathFileJS);
                     Watching(pathFolder);
-                }               
+                    OpenVisualCode(pathWatching);
+                    Debug.Print("tao file trong");
+                }
+                else {
+                    Debug.Print("Da co file");
+                    Watching(pathFolder);
+                    OpenVisualCode(pathWatching);
+                }
             }
             catch (Exception ex)
             {
@@ -569,41 +606,17 @@ namespace NFM
         }
         private void FastProjectForm_Activated(object sender, EventArgs e)
         {
-            //try
-            //{
-            //    //Computer.Computer computer = new Computer.Computer();
-            //    //Debug.Print(computer.UUID());
-            //    if (cboProjectList.SelectedValue != null)
-            //    {
-            //        GetListModule(cboProjectList.SelectedValue.ToString());
-            //    }
-
-            //    if (checkWatching)
-            //    {
-            //        if (checkFormActive)
-            //        {
-            //            //Process[] processlist = Process.GetProcesses();
-            //            Process[] processCode = Process.GetProcessesByName("Code");
-            //            foreach (Process process in processCode)
-            //            {
-            //                if (!String.IsNullOrEmpty(process.MainWindowTitle))
-            //                {
-
-            //                    string nameFileOpening = process.MainWindowTitle.Substring(0, process.MainWindowTitle.IndexOf(" - ")).Trim();
-            //                    string tmp = process.MainWindowTitle.Substring(process.MainWindowTitle.IndexOf(" - ") + 3);
-            //                    string folderFileOpening = tmp.Substring(0, tmp.IndexOf(" - "));
-            //                    //Debug.Print(folderFileOpening);
-            //                    //Debug.Print(nameFileOpening);
-            //                }
-            //            }
-            //        }
-            //        checkFormActive = false;
-            //    }
-            //}
-            //catch (Exception ex)
-            //{
-            //    Debug.Print(ex.Message);
-            //}
+            try
+            {                
+                //if (cboProjectList.SelectedValue != null)
+                //{
+                //    GetListModule(cboProjectList.SelectedValue.ToString());
+                //}
+            }
+            catch (Exception ex)
+            {
+                Debug.Print(ex.Message);
+            }
         }
 
         private void FastProjectForm_Deactivate(object sender, EventArgs e)
@@ -611,6 +624,6 @@ namespace NFM
             //Debug.Print("Deactive");
             //await TaskDelay(5000);
             //checkFormActive = true;
-        }
+        }     
     }
 }
