@@ -448,7 +448,7 @@ namespace NFM
             GetListModule(projectID);
         }
 
-        private void OpenVisualCode(string pathFolder) {
+        private void OpenVisualCode(string pathFolder, string pathFile) {
             var proc1 = new ProcessStartInfo();
             proc1.UseShellExecute = true;
 
@@ -456,7 +456,7 @@ namespace NFM
 
             proc1.FileName = @"C:\Windows\System32\cmd.exe";
             //proc1.Verb = "runas";
-            proc1.Arguments = "/c code .";
+            proc1.Arguments = "/c code " + pathFile;
             proc1.WindowStyle = ProcessWindowStyle.Hidden;
             Process.Start(proc1);
         }
@@ -655,7 +655,7 @@ namespace NFM
                 {
                     File.CreateText(pathFileJS);
                     Watching(pathFolder);
-                    OpenVisualCode(pathFolder);
+                    OpenVisualCode(pathFolder, fileName + "_" + fileID + ".js");
                     Debug.Print("tao file trong");
                 }
                 else
@@ -664,7 +664,7 @@ namespace NFM
                     DialogResult res = MessageBox.Show(temp, "Information", MessageBoxButtons.YesNoCancel, MessageBoxIcon.Question);
                     if (res == DialogResult.Yes)
                     {
-                        OpenVisualCode(pathFolder);
+                        OpenVisualCode(pathFolder, fileName + "_" + fileID + ".js");
                         pathWatching = pathFolder;
                         Watching(pathFolder);
                     }
@@ -676,7 +676,7 @@ namespace NFM
                             sw.WriteLine(contentJS);                         
                             pathWatching = pathFolder;
                             Watching(pathFolder);
-                            OpenVisualCode(pathFolder);
+                            OpenVisualCode(pathFolder, fileName + "_" + fileID + ".js");
                         }
                     }
                 }
