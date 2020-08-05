@@ -21,8 +21,11 @@ using System.Drawing;
 
 namespace NFM
 {
+    public delegate void EventHandler();
     public partial class FastProjectForm : Form
     {
+        public static event EventHandler laterEvent;
+        public static event EventHandler earlyEvent;
         static string tokenLogin= "";
         public static string pathWatching = "";
         string pathConfig = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) + "\\NFM\\Config\\";
@@ -47,11 +50,23 @@ namespace NFM
                 processStart.Start();
                 processStop.EventArrived += new EventArrivedEventHandler(processStop_EventArrived);
                 processStop.Start();
+                laterEvent += new EventHandler(laterEvent_Event);
+                earlyEvent += new EventHandler(earlyEvent_Event);
             }
             catch (Exception ex)
             {
                 MessageBox.Show(ex.Message);
             }
+        }
+
+        private void earlyEvent_Event()
+        {
+            MessageBox.Show("earlyEvent_Event");
+        }
+
+        private void laterEvent_Event()
+        {
+            MessageBox.Show("laterEvent_Event");
         }
 
         private void FastProjectForm_Load(object sender, EventArgs e)
@@ -79,9 +94,10 @@ namespace NFM
             string processName = e.NewEvent.Properties["ProcessName"].Value.ToString();
             string processID = Convert.ToInt32(e.NewEvent.Properties["ProcessID"].Value).ToString();
             //Debug.Print("Process stopped. Name: " + processName + " | ID: " + processID);
-            processStop.EventArrived -= new EventArrivedEventHandler(processStop_EventArrived);
+            //processStop.EventArrived -= new EventArrivedEventHandler(processStop_EventArrived);
+            processStop.Stop();
             processStart.EventArrived += new EventArrivedEventHandler(processStart_EventArrived);
-            
+
         }
         private async void processStart_EventArrived(object sender, EventArrivedEventArgs e)
         {
@@ -97,7 +113,7 @@ namespace NFM
             string processID = Convert.ToInt32(e.NewEvent.Properties["ProcessID"].Value).ToString();
             string pathFolder = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) + "\\NFM\\FastProject\\";
             //Debug.Print(processName);
-
+            
             Process[] processCode = Process.GetProcessesByName("Code");
 
             try
@@ -125,13 +141,12 @@ namespace NFM
 
                     }
                 }
+                
                 //Debug.Print("pathFileJS: " + pathFileJS);
                 if (pathFileJS != "")
                 {
                     contentJSLocal = File.ReadAllText(pathFileJS);
-                    //Debug.Print("contentJSLocal: " + contentJSLocal);
-                    processStart.EventArrived -= new EventArrivedEventHandler(processStart_EventArrived);
-                    processStop.EventArrived += new EventArrivedEventHandler(processStop_EventArrived);
+                    //Debug.Print("contentJSLocal: " + contentJSLocal);                    
                     if (contentJSLocal.Trim() == "")
                     {
                         using (StreamWriter sw = File.CreateText(pathFileJS))
@@ -157,11 +172,17 @@ namespace NFM
                     //        //Watching(pathFolder);
                     //    }
                     //}
-                    ////}                 
+                    ////} 
+                    processStart.EventArrived -= new EventArrivedEventHandler(processStart_EventArrived);
+                    //processStop.EventArrived += new EventArrivedEventHandler(processStop_EventArrived);
+                    processStop.Start();
                 }
                 if (this.WindowState == FormWindowState.Minimized)
                 {
-                    pathWatching = pathFolder + moduleID;
+                    if (pathFolder != "" && moduleID != "")
+                    {
+                        pathWatching = pathFolder + moduleID;
+                    }
                     if (pathWatching != "")
                     {
                         //Debug.Print(pathWatching);
@@ -206,18 +227,23 @@ namespace NFM
                             if (compare < 0)
                             {
                                 Debug.Print(dgvListModules.Rows[rowIndex].Cells[7].Value.ToString() + " < " + updateTime);
+                                earlyEvent.Invoke();
                             }
                             else if (compare == 0)
                             {
                                 Debug.Print(dgvListModules.Rows[rowIndex].Cells[7].Value.ToString() + " = " + updateTime);
+                                //laterEvent.Invoke();
+
                             }
                             else {
                                 Debug.Print(dgvListModules.Rows[rowIndex].Cells[7].Value.ToString() + " > " + updateTime);
+                                laterEvent.Invoke();
                             }
                         }
                     }
                 }
-            }
+                
+            }           
             catch (Exception ex)
             {
                 Debug.Print(ex.Message);
