@@ -102,7 +102,7 @@ namespace NFM
         private async void processStart_EventArrived(object sender, EventArrivedEventArgs e)
         {
             string fileID = "";
-            string moduleID = "";
+            string fileName = "";
             string nameFileOpening = "";
             string folderFileOpening = "";
             string contentJS = "";
@@ -128,11 +128,11 @@ namespace NFM
                             string tmp = process.MainWindowTitle.Substring(process.MainWindowTitle.IndexOf(" - ") + 3);
                             folderFileOpening = tmp.Substring(0, tmp.IndexOf(" - "));
 
-                            fileID = Path.GetFileNameWithoutExtension(nameFileOpening).Substring(0, Path.GetFileNameWithoutExtension(nameFileOpening).IndexOf('_'));
-                            moduleID = Path.GetFileNameWithoutExtension(nameFileOpening).Substring(Path.GetFileNameWithoutExtension(nameFileOpening).IndexOf('_') + 1);
+                            fileName = Path.GetFileNameWithoutExtension(nameFileOpening).Substring(0, Path.GetFileNameWithoutExtension(nameFileOpening).IndexOf('_'));
+                            fileID = Path.GetFileNameWithoutExtension(nameFileOpening).Substring(Path.GetFileNameWithoutExtension(nameFileOpening).IndexOf('_') + 1);
                             //truyen id de lay content
                             contentJS = await GetContentModuleFileJS(fileID);
-                            pathFileJS = pathFolder + "\\" + moduleID + "\\" + fileID + "_" + moduleID + ".js";
+                            pathFileJS = pathFolder + "\\" + fileName + "_" + fileID + ".js";
                         }
                         else
                         {
@@ -141,7 +141,7 @@ namespace NFM
 
                     }
                 }
-                
+                //Debug.Print(fileName + "-" +  fileID);
                 //Debug.Print("pathFileJS: " + pathFileJS);
                 if (pathFileJS != "")
                 {
@@ -174,14 +174,14 @@ namespace NFM
                     //}
                     ////} 
                     processStart.EventArrived -= new EventArrivedEventHandler(processStart_EventArrived);
-                    //processStop.EventArrived += new EventArrivedEventHandler(processStop_EventArrived);
+                    //processStop.EventArrived += new EventArrivedEventHandler(processStop_EventArrived);                    
                     processStop.Start();
                 }
                 if (this.WindowState == FormWindowState.Minimized)
                 {
-                    if (pathFolder != "" && moduleID != "")
+                    if (pathFolder != "")
                     {
-                        pathWatching = pathFolder + moduleID;
+                        pathWatching = pathFolder;
                     }
                     if (pathWatching != "")
                     {
@@ -227,7 +227,7 @@ namespace NFM
                             if (compare < 0)
                             {
                                 Debug.Print(dgvListModules.Rows[rowIndex].Cells[7].Value.ToString() + " < " + updateTime);
-                                earlyEvent.Invoke();
+                                //earlyEvent.Invoke();
                             }
                             else if (compare == 0)
                             {
@@ -237,12 +237,12 @@ namespace NFM
                             }
                             else {
                                 Debug.Print(dgvListModules.Rows[rowIndex].Cells[7].Value.ToString() + " > " + updateTime);
-                                laterEvent.Invoke();
+                                //laterEvent.Invoke();
                             }
                         }
                     }
                 }
-                
+                processStart.Dispose();
             }           
             catch (Exception ex)
             {
@@ -564,6 +564,8 @@ namespace NFM
         {
             try
             {
+                string fileID = FileID.Substring(FileID.IndexOf("_") + 1);
+
                 HttpClient client = new HttpClient();
                 client.BaseAddress = new Uri("https://tapi.lhu.edu.vn/");
                 client.DefaultRequestHeaders.Accept.Clear();
@@ -571,18 +573,15 @@ namespace NFM
                 client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", tokenLogin);
                 //GET Method
                 JObject jObject = new JObject();
-                jObject["FileID"] = FileID;
+                jObject["FileID"] = fileID;
                 jObject["FileContent"] = FileContent;
+                jObject["ComputerID"] = UUID;
                 StringContent post = new StringContent(JsonConvert.SerializeObject(jObject), Encoding.UTF8, "application/json");
                 HttpResponseMessage response = await client.PostAsync("fp/admin_FileUpdate/uploadcontent", post);
                 statusCodeUpdate = response.StatusCode.ToString();
                 if (statusCodeUpdate == "OK")
-                {
-                    
-                    string fileID = FileID.Substring(0, FileID.IndexOf('_'));
+                {                   
                     String searchValue = fileID;
-
-                    Debug.Print(FileID);
                     int rowIndex = -1;
                     foreach (DataGridViewRow row in dgvListModules.Rows)
                     {
@@ -631,25 +630,27 @@ namespace NFM
             WriteToFile($"FileSystemWatcher_Created:  {e.Name} -- {DateTime.Now}");
         }
 
-        private void dgvListModules_CellContentClick(object sender, DataGridViewCellEventArgs e)
+        private async void dgvListModules_CellContentClick(object sender, DataGridViewCellEventArgs e)
         {
             string fileID = "";
             string moduleID = "";
+            string fileName = "";
             
             if (e.ColumnIndex == dgvListModules.Columns["edit_column"].Index && e.RowIndex >= 0)
             {
                 fileID = dgvListModules.Rows[e.RowIndex].Cells[1].Value.ToString();
+                fileName = dgvListModules.Rows[e.RowIndex].Cells[6].Value.ToString();
                 moduleID = dgvListModules.Rows[e.RowIndex].Cells[3].Value.ToString();
             }         
             try
             {
-                string pathFolder = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) + "\\NFM\\FastProject\\" + moduleID;
+                string pathFolder = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) + "\\NFM\\FastProject\\";
                 
                 if (!Directory.Exists(pathFolder))
                 {
                     Directory.CreateDirectory(pathFolder);
                 }
-                string pathFileJS = pathFolder + "\\" + fileID + "_" + moduleID + ".js";
+                string pathFileJS = pathFolder + "\\" + fileName + "_" + fileID + ".js";
                 if (!File.Exists(pathFileJS))
                 {
                     File.CreateText(pathFileJS);
@@ -657,10 +658,27 @@ namespace NFM
                     OpenVisualCode(pathFolder);
                     Debug.Print("tao file trong");
                 }
-                else {
-                    Debug.Print("Da co file");
-                    Watching(pathFolder);
-                    OpenVisualCode(pathFolder);
+                else
+                {
+                    string temp = "Ban lua chon: \n Yes: tiep tuc chinh sua file local. \n No: Đồng bộ nội dung mới nhất trên server. \n Cancel: Hủy thao tác.";
+                    DialogResult res = MessageBox.Show(temp, "Information", MessageBoxButtons.YesNoCancel, MessageBoxIcon.Question);
+                    if (res == DialogResult.Yes)
+                    {
+                        OpenVisualCode(pathFolder);
+                        pathWatching = pathFolder;
+                        Watching(pathFolder);
+                    }
+                    if (res == DialogResult.No)
+                    {
+                        string contentJS = await GetContentModuleFileJS(fileID);
+                        using (StreamWriter sw = File.CreateText(pathFileJS))
+                        {
+                            sw.WriteLine(contentJS);                         
+                            pathWatching = pathFolder;
+                            Watching(pathFolder);
+                            OpenVisualCode(pathFolder);
+                        }
+                    }
                 }
             }
             catch (Exception ex)
