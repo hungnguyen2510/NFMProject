@@ -30,7 +30,7 @@ namespace NFM
         bool checkWatching = false;
         static string content = "";
         string UUID = "";
-        string statusCodeUpdate = "";
+        static string statusCodeUpdate = "";
 
         ManagementEventWatcher processStart = new ManagementEventWatcher("SELECT * FROM Win32_ProcessStartTrace Where ProcessName='Code.exe'");
         ManagementEventWatcher processStop = new ManagementEventWatcher("SELECT * FROM Win32_ProcessStopTrace Where ProcessName='Code.exe'");
@@ -92,6 +92,7 @@ namespace NFM
             string contentJS = "";
             string contentJSLocal = "";
             string pathFileJS = "";
+            string updateTime = "";
             string processName = e.NewEvent.Properties["ProcessName"].Value.ToString();
             string processID = Convert.ToInt32(e.NewEvent.Properties["ProcessID"].Value).ToString();
             string pathFolder = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) + "\\NFM\\FastProject\\";
@@ -124,11 +125,11 @@ namespace NFM
 
                     }
                 }
-                Debug.Print("pathFileJS: " + pathFileJS);
+                //Debug.Print("pathFileJS: " + pathFileJS);
                 if (pathFileJS != "")
                 {
                     contentJSLocal = File.ReadAllText(pathFileJS);
-                    Debug.Print("contentJSLocal: " + contentJSLocal);
+                    //Debug.Print("contentJSLocal: " + contentJSLocal);
                     processStart.EventArrived -= new EventArrivedEventHandler(processStart_EventArrived);
                     processStop.EventArrived += new EventArrivedEventHandler(processStop_EventArrived);
                     if (contentJSLocal.Trim() == "")
@@ -156,13 +157,64 @@ namespace NFM
                     //        //Watching(pathFolder);
                     //    }
                     //}
-                    ////}
-                    if (this.WindowState == FormWindowState.Minimized)
+                    ////}                 
+                }
+                if (this.WindowState == FormWindowState.Minimized)
+                {
+                    pathWatching = pathFolder + moduleID;
+                    if (pathWatching != "")
                     {
-                        pathWatching = pathFolder + moduleID;
-                        Debug.Print(pathWatching);
+                        //Debug.Print(pathWatching);
                         Watching(pathWatching);
-                        //OpenVisualCode(pathWatching);
+                    }
+                    int rowIndex = -1;
+                    if (fileID != "")
+                    {
+                        foreach (DataGridViewRow row in dgvListModules.Rows)
+                        {
+                            if (row.Cells[1].Value.ToString().Equals(fileID))
+                            {
+                                rowIndex = row.Index;
+                                break;
+                            }
+                        }
+                        HttpClient client = new HttpClient();
+                        client.BaseAddress = new Uri("https://tapi.lhu.edu.vn/");
+                        client.DefaultRequestHeaders.Accept.Clear();
+                        client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+                        client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", tokenLogin);
+                        //GET Method
+                        JObject jObject = new JObject();
+                        jObject["fileID"] = fileID;
+                        StringContent post = new StringContent(JsonConvert.SerializeObject(jObject), Encoding.UTF8, "application/json");
+                        HttpResponseMessage response = await client.PostAsync("fp/admin_FileList/code", post);
+
+                        //HttpResponseMessage response = await client.GetAsync("fp/admin_FileList/code" + projectID);
+                        
+                        if (response.IsSuccessStatusCode)
+                        {
+                            var res = await response.Content.ReadAsStringAsync();
+                            JObject data = JObject.Parse(res.ToString());
+                            JArray items = (JArray)data["data"];
+                            foreach (var item in items)
+                            {
+                                updateTime = item["UpdateTime"].ToString();                              
+                            }
+                            DateTime t1 = Convert.ToDateTime(dgvListModules.Rows[rowIndex].Cells[7].Value.ToString());
+                            DateTime t2 = Convert.ToDateTime(updateTime);
+                            int compare = DateTime.Compare(t1, t2);
+                            if (compare < 0)
+                            {
+                                Debug.Print(dgvListModules.Rows[rowIndex].Cells[7].Value.ToString() + " < " + updateTime);
+                            }
+                            else if (compare == 0)
+                            {
+                                Debug.Print(dgvListModules.Rows[rowIndex].Cells[7].Value.ToString() + " = " + updateTime);
+                            }
+                            else {
+                                Debug.Print(dgvListModules.Rows[rowIndex].Cells[7].Value.ToString() + " > " + updateTime);
+                            }
+                        }
                     }
                 }
             }
@@ -170,7 +222,7 @@ namespace NFM
             {
                 Debug.Print(ex.Message);
             }
-        }     
+        }
         public JObject ReadFileJSON(string path)
         {
             JObject o1 = JObject.Parse(File.ReadAllText(path));
@@ -498,6 +550,27 @@ namespace NFM
                 StringContent post = new StringContent(JsonConvert.SerializeObject(jObject), Encoding.UTF8, "application/json");
                 HttpResponseMessage response = await client.PostAsync("fp/admin_FileUpdate/uploadcontent", post);
                 statusCodeUpdate = response.StatusCode.ToString();
+                if (statusCodeUpdate == "OK")
+                {
+                    
+                    string fileID = FileID.Substring(0, FileID.IndexOf('_'));
+                    String searchValue = fileID;
+
+                    Debug.Print(FileID);
+                    int rowIndex = -1;
+                    foreach (DataGridViewRow row in dgvListModules.Rows)
+                    {
+                        if (row.Cells[1].Value.ToString().Equals(searchValue))
+                        {
+                            rowIndex = row.Index;
+                            break;
+                        }
+                    }
+                    dgvListModules.Rows[rowIndex].Cells[7].Value = DateTime.Now.ToString();
+                }
+                else {
+                    Debug.Print(statusCodeUpdate);
+                }
             }
             catch (Exception ex)
             {
@@ -516,13 +589,13 @@ namespace NFM
             }           
             if (content.Trim() == "")
             {
-                //WriteToFile($"FileSystemWatcher_Changed:  {e.Name} -- {""} -- {DateTime.Now}");
+                WriteToFile($"FileSystemWatcher_Changed:  {e.Name} -- {""} -- {DateTime.Now}");
                 PostContent("", Path.GetFileNameWithoutExtension(e.Name));
             }
             else
             {
                 await TaskDelay(1000);
-                //WriteToFile($"FileSystemWatcher_Changed:  {e.Name} -- {content} -- {DateTime.Now}");
+                WriteToFile($"FileSystemWatcher_Changed:  {e.Name} -- {content} -- {DateTime.Now}");
                 PostContent(content, Path.GetFileNameWithoutExtension(e.Name));
             }
         }
@@ -532,18 +605,16 @@ namespace NFM
             WriteToFile($"FileSystemWatcher_Created:  {e.Name} -- {DateTime.Now}");
         }
 
-        private async void dgvListModules_CellContentClick(object sender, DataGridViewCellEventArgs e)
+        private void dgvListModules_CellContentClick(object sender, DataGridViewCellEventArgs e)
         {
             string fileID = "";
-            string fileName = "";
             string moduleID = "";
             
             if (e.ColumnIndex == dgvListModules.Columns["edit_column"].Index && e.RowIndex >= 0)
             {
                 fileID = dgvListModules.Rows[e.RowIndex].Cells[1].Value.ToString();
                 moduleID = dgvListModules.Rows[e.RowIndex].Cells[3].Value.ToString();
-            }
-
+            }         
             try
             {
                 string pathFolder = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) + "\\NFM\\FastProject\\" + moduleID;
@@ -557,13 +628,13 @@ namespace NFM
                 {
                     File.CreateText(pathFileJS);
                     Watching(pathFolder);
-                    OpenVisualCode(pathWatching);
+                    OpenVisualCode(pathFolder);
                     Debug.Print("tao file trong");
                 }
                 else {
                     Debug.Print("Da co file");
                     Watching(pathFolder);
-                    OpenVisualCode(pathWatching);
+                    OpenVisualCode(pathFolder);
                 }
             }
             catch (Exception ex)
@@ -580,9 +651,9 @@ namespace NFM
                 this.Hide();
                 if (checkWatching == false)
                 {
-                    systemTray.Text = "Vui long chon file watching.....";
+                    systemTray.Text = "Vui lòng chọn file, hoặc mở VSCode";
                     systemTray.BalloonTipTitle = "NFM System";
-                    systemTray.BalloonTipText = "Vui long chon file watching.....";
+                    systemTray.BalloonTipText = "Vui lòng chọn file, hoặc mở VSCode";
                     systemTray.ShowBalloonTip(500);
                 }
             }

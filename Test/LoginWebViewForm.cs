@@ -33,7 +33,8 @@
                     sw.WriteLine(json);
                 }
                 Process process = new Process();
-                process.StartInfo.FileName = @"C:\Users\Hung Mer\Source\Repos\NFMProject\NFMProject\bin\Debug\NFMProject.exe";
+                string pathNFMProject = Directory.GetCurrentDirectory() + "\\NFMProject.exe";
+                process.StartInfo.FileName = pathNFMProject;
                 process.StartInfo.Verb = "runas";
                 process.StartInfo.UseShellExecute = true;
                 process.Start();
@@ -43,6 +44,6 @@
             {
                 MessageBox.Show(ex.Message, "NFM", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
-        }             
+        }
     }
 }

@@ -30,12 +30,12 @@
         {
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(LoginWebViewForm));
             this.panel2 = new System.Windows.Forms.Panel();
+            this.webView1 = new Microsoft.Toolkit.Forms.UI.Controls.WebView();
             this.panel1 = new System.Windows.Forms.Panel();
             this.label1 = new System.Windows.Forms.Label();
-            this.webView1 = new Microsoft.Toolkit.Forms.UI.Controls.WebView();
             this.panel2.SuspendLayout();
-            this.panel1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.webView1)).BeginInit();
+            this.panel1.SuspendLayout();
             this.SuspendLayout();
             // 
             // panel2
@@ -45,6 +45,18 @@
             this.panel2.Name = "panel2";
             this.panel2.Size = new System.Drawing.Size(1237, 564);
             this.panel2.TabIndex = 8;
+            // 
+            // webView1
+            // 
+            this.webView1.Dock = System.Windows.Forms.DockStyle.Bottom;
+            this.webView1.IsScriptNotifyAllowed = true;
+            this.webView1.Location = new System.Drawing.Point(0, 0);
+            this.webView1.MinimumSize = new System.Drawing.Size(20, 20);
+            this.webView1.Name = "webView1";
+            this.webView1.Size = new System.Drawing.Size(1237, 564);
+            this.webView1.Source = new System.Uri("https://app.lhu.edu.vn/?appmode=win", System.UriKind.Absolute);
+            this.webView1.TabIndex = 3;
+            this.webView1.ScriptNotify += new System.EventHandler<Microsoft.Toolkit.Win32.UI.Controls.Interop.WinRT.WebViewControlScriptNotifyEventArgs>(this.webView1_ScriptNotify);
             // 
             // panel1
             // 
@@ -69,19 +81,6 @@
             this.label1.Text = "ĐĂNG NHẬP";
             this.label1.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
-            // webView1
-            // 
-            this.webView1.Dock = System.Windows.Forms.DockStyle.Bottom;
-            this.webView1.IsScriptNotifyAllowed = true;
-            this.webView1.Location = new System.Drawing.Point(0, 0);
-            this.webView1.MinimumSize = new System.Drawing.Size(20, 20);
-            this.webView1.Name = "webView1";
-            this.webView1.Size = new System.Drawing.Size(1237, 564);
-            this.webView1.Source = new System.Uri("https://app.lhu.edu.vn/?appmode=win", System.UriKind.Absolute);
-
-            this.webView1.TabIndex = 3;
-            this.webView1.ScriptNotify += new System.EventHandler<Microsoft.Toolkit.Win32.UI.Controls.Interop.WinRT.WebViewControlScriptNotifyEventArgs>(this.webView1_ScriptNotify);
-            // 
             // LoginWebViewForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -94,8 +93,8 @@
             this.Name = "LoginWebViewForm";
             this.Text = "NFM";
             this.panel2.ResumeLayout(false);
-            this.panel1.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.webView1)).EndInit();
+            this.panel1.ResumeLayout(false);
             this.ResumeLayout(false);
 
         }

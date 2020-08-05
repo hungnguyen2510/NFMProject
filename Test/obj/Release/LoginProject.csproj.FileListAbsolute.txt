@@ -1,0 +1,14 @@
+C:\Users\Hung Mer\Source\Repos\NFMProject\Test\bin\Release\LoginProject.exe.config
+C:\Users\Hung Mer\Source\Repos\NFMProject\Test\bin\Release\LoginProject.exe
+C:\Users\Hung Mer\Source\Repos\NFMProject\Test\bin\Release\LoginProject.pdb
+C:\Users\Hung Mer\Source\Repos\NFMProject\Test\bin\Release\Microsoft.Toolkit.Forms.UI.Controls.WebView.dll
+C:\Users\Hung Mer\Source\Repos\NFMProject\Test\bin\Release\Microsoft.Toolkit.Forms.UI.Controls.WebView.pdb
+C:\Users\Hung Mer\Source\Repos\NFMProject\Test\bin\Release\Newtonsoft.Json.dll
+C:\Users\Hung Mer\Source\Repos\NFMProject\Test\obj\Release\LoginProject.csprojAssemblyReference.cache
+C:\Users\Hung Mer\Source\Repos\NFMProject\Test\obj\Release\LoginProject.LoginWebViewForm.resources
+C:\Users\Hung Mer\Source\Repos\NFMProject\Test\obj\Release\LoginProject.Properties.Resources.resources
+C:\Users\Hung Mer\Source\Repos\NFMProject\Test\obj\Release\LoginProject.csproj.GenerateResource.cache
+C:\Users\Hung Mer\Source\Repos\NFMProject\Test\obj\Release\LoginProject.csproj.CoreCompileInputs.cache
+C:\Users\Hung Mer\Source\Repos\NFMProject\Test\obj\Release\LoginProject.csproj.CopyComplete
+C:\Users\Hung Mer\Source\Repos\NFMProject\Test\obj\Release\LoginProject.exe
+C:\Users\Hung Mer\Source\Repos\NFMProject\Test\obj\Release\LoginProject.pdb
