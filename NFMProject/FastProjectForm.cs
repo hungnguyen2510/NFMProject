@@ -27,7 +27,7 @@ namespace NFM
     {
         public static event EventHandler laterEvent;
         public static event EventHandler earlyEvent;
-        static string tokenLogin= "";
+        static string tokenLogin = "";
         public static string pathWatching = "";
         string pathConfig = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) + "\\NFM\\Config\\";
         string pathKey = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) + "\\NFM\\Key\\";
@@ -35,7 +35,7 @@ namespace NFM
         static string content = "";
         string UUID = "";
         static string statusCodeUpdate = "";
-
+        FileSystemWatcher fileSystemWatcher = new FileSystemWatcher();
         ManagementEventWatcher processStart = new ManagementEventWatcher("SELECT * FROM Win32_ProcessStartTrace Where ProcessName='Code.exe'");
         ManagementEventWatcher processStop = new ManagementEventWatcher("SELECT * FROM Win32_ProcessStopTrace Where ProcessName='Code.exe'");
         public FastProjectForm()
@@ -65,14 +65,11 @@ namespace NFM
             MessageBox.Show("earlyEvent_Event");
         }
 
-        private void laterEvent_Event()
-        {
-            MessageBox.Show("laterEvent_Event");
-        }
+        
 
         private void FastProjectForm_Load(object sender, EventArgs e)
         {
-            
+
             Debug.Print(UUID);
             DirectoryInfo d = new DirectoryInfo(pathKey);
             FileInfo[] Files = d.GetFiles("*.json");
@@ -113,7 +110,7 @@ namespace NFM
             string processID = Convert.ToInt32(e.NewEvent.Properties["ProcessID"].Value).ToString();
             string pathFolder = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) + "\\NFM\\FastProject\\";
             //Debug.Print(processName);
-            
+
             Process[] processCode = Process.GetProcessesByName("Code");
 
             try
@@ -150,7 +147,7 @@ namespace NFM
                         {
                             sw.WriteLine(contentJS);
                         }
-                    }                   
+                    }
                     processStart.EventArrived -= new EventArrivedEventHandler(processStart_EventArrived);
                     //processStop.EventArrived += new EventArrivedEventHandler(processStop_EventArrived);                    
                     processStop.Start();
@@ -161,9 +158,9 @@ namespace NFM
                     {
                         pathWatching = pathFolder;
                         Watching(pathWatching);
-                    }               
+                    }
                 }
-            }           
+            }
             catch (Exception ex)
             {
                 Debug.Print(ex.Message);
@@ -187,9 +184,10 @@ namespace NFM
             Application.Exit();
         }
 
-        private async void GetListProject() {
+        private async void GetListProject()
+        {
             ListProject listProject = new ListProject();
-            listProject.projects = new List<Project>();           
+            listProject.projects = new List<Project>();
             try
             {
                 HttpClient client = new HttpClient();
@@ -205,12 +203,13 @@ namespace NFM
                     var res = await response.Content.ReadAsStringAsync();
                     JObject data = JObject.Parse(res.ToString());
                     JArray items = (JArray)data["data"];
-                    foreach (var item in items) {
+                    foreach (var item in items)
+                    {
                         Project project = new Project();
                         project.id = item["id"].ToString();
                         project.ProjectID = item["ProjectID"].ToString();
                         project.ProjectName = item["ProjectName"].ToString();
-                        listProject.projects.Add(project);                      
+                        listProject.projects.Add(project);
                     }
                     cboProjectList.DataSource = listProject.projects;
                     cboProjectList.ValueMember = "ProjectID";
@@ -221,7 +220,8 @@ namespace NFM
                     Debug.Print("GetListProject: Internal server Error");
                 }
             }
-            catch (Exception ex) {
+            catch (Exception ex)
+            {
                 MessageBox.Show(ex.Message, "GetListProject", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
@@ -276,7 +276,7 @@ namespace NFM
                     JObject data = JObject.Parse(res.ToString());
                     JArray items = (JArray)data["data"];
                     foreach (var item in items)
-                    {                      
+                    {
                         Module module = new Module();
                         module.fileID = item["fileID"].ToString();
                         module.ProjectID = item["ProjectID"].ToString();
@@ -285,12 +285,13 @@ namespace NFM
                         module.ModuleName = item["moduleName"].ToString();
                         module.FileName = item["FileName"].ToString();
                         module.UpdateTime = item["UpdateTime"].ToString();
-                        if (module.ModuleID == "jsoneditor") {
+                        if (module.ModuleID == "jsoneditor")
+                        {
                             break;
                         }
                         listModule.modules.Add(module);
-                        
-                    }                   
+
+                    }
                     ListtoDataTable lsttodt = new ListtoDataTable();
                     DataTable dt = lsttodt.ToDataTable(listModule.modules);
                     dgvListModules.DataSource = dt;
@@ -351,7 +352,7 @@ namespace NFM
                 {
                     Debug.Print("GetContentModuleFileJS Internal server Error");
                 }
-                
+
             }
             catch (Exception ex)
             {
@@ -366,7 +367,8 @@ namespace NFM
             GetListModule(projectID);
         }
 
-        private void OpenVisualCode(string pathFolder, string pathFile) {
+        private void OpenVisualCode(string pathFolder, string pathFile)
+        {
             var proc1 = new ProcessStartInfo();
             proc1.UseShellExecute = true;
 
@@ -401,7 +403,7 @@ namespace NFM
                     //picState.Visible = true;
                     this.WindowState = FormWindowState.Minimized;
                     if (this.WindowState == FormWindowState.Minimized)
-                    {                       
+                    {
                         systemTray.Visible = true;
                         //WriteToFile("Service is started at " + pathWatching + " ---- " + DateTime.Now);
                         CreateFileWatcher(pathWatching);
@@ -424,12 +426,13 @@ namespace NFM
 
         public void CreateFileWatcher(string path)
         {
-            var fileSystemWatcher = new FileSystemWatcher();
+            
             fileSystemWatcher.Created += FileSystemWatcher_Created;
             fileSystemWatcher.Changed += FileSystemWatcher_Changed;
             fileSystemWatcher.Deleted += FileSystemWatcher_Deleted;
             fileSystemWatcher.Renamed += FileSystemWatcher_Renamed;
             fileSystemWatcher.Path = path;
+            fileSystemWatcher.NotifyFilter = NotifyFilters.LastAccess | NotifyFilters.LastWrite | NotifyFilters.FileName |NotifyFilters.DirectoryName;
             fileSystemWatcher.EnableRaisingEvents = true;
             WriteToFile("Watching....");
         }
@@ -443,7 +446,7 @@ namespace NFM
                 {
                     Directory.CreateDirectory(path);
                 }
-                string filepath = path + "\\NFMLogs_"+ DateTime.Now.Date.ToShortDateString().Replace('/', '_') + ".txt";
+                string filepath = path + "\\NFMLogs_" + DateTime.Now.Date.ToShortDateString().Replace('/', '_') + ".txt";
                 if (!File.Exists(filepath))
                 {
                     // Create a file to write to.
@@ -477,7 +480,8 @@ namespace NFM
             WriteToFile($"FileSystemWatcher_Deleted:  {e.Name} -- {DateTime.Now}");
         }
 
-        private string checkUpdate(string fileID) {
+        private async Task<String> checkUpdate(string fileID)
+        {
             Debug.Print("CheckUpdate");
             string result = "";
             string updateTime = "";
@@ -545,16 +549,14 @@ namespace NFM
                         result = "-1";
                     }
                 }
-
             }
-            //Thread.Sleep(5000);
             return result;
         }
 
-        private void PostContent(string FileContent, string FileID) 
-        {          
+        private void PostContent(string FileContent, string FileID)
+        {
             try
-            {               
+            {
                 string fileID = FileID.Substring(FileID.IndexOf("_") + 1);
                 string pathFolder = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) + "\\NFM\\FastProject\\";
                 HttpClient client = new HttpClient();
@@ -567,8 +569,8 @@ namespace NFM
                 jObject["FileID"] = fileID;
                 jObject["FileContent"] = FileContent;
                 jObject["ComputerID"] = UUID;
-                string resultCheckUpdate = checkUpdate(fileID);
                 StringContent post = new StringContent(JsonConvert.SerializeObject(jObject), Encoding.UTF8, "application/json");
+                string resultCheckUpdate = checkUpdate(fileID).Result;
                 if (resultCheckUpdate != "")
                 {
                     if (resultCheckUpdate == "-1")
@@ -651,27 +653,127 @@ namespace NFM
                 //MessageBox.Show(ex.Message, "NFM",MessageBoxButtons.OK,MessageBoxIcon.Error);
             }
         }
-
+        private void laterEvent_Event()
+        {
+            Debug.Print("laterEvent_Event");
+            fileSystemWatcher.Changed += delegate { 
+                fileSystemWatcher.Changed += FileSystemWatcher_Changed;
+            };
+            //check = false;          
+        }
         private void FileSystemWatcher_Changed(object sender, FileSystemEventArgs e)
         {
             string path = @e.FullPath;
-            Thread.Sleep(1000);
             using (FileStream file = new FileStream(path, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
             using (StreamReader reader = new StreamReader(file))
             {
                 content = reader.ReadToEnd();
-            }           
+            }
             if (content.Trim() == "")
             {
                 WriteToFile($"FileSystemWatcher_Changed:  {e.Name} -- {""} -- {DateTime.Now}");
-                PostContent("", Path.GetFileNameWithoutExtension(e.Name));
+                //PostContent("", Path.GetFileNameWithoutExtension(e.Name));
             }
             else
             {
-                Thread.Sleep(1000);
+                string fileID = Path.GetFileNameWithoutExtension(e.Name).Substring(Path.GetFileNameWithoutExtension(e.Name).IndexOf("_") + 1);
+                string pathFolder = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) + "\\NFM\\FastProject\\";
+                HttpClient client = new HttpClient();
+                client.BaseAddress = new Uri("https://tapi.lhu.edu.vn/");
+                client.DefaultRequestHeaders.Accept.Clear();
+                client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+                client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", tokenLogin);
+                //GET Method
+                JObject jObject = new JObject();
+                jObject["FileID"] = fileID;
+                jObject["FileContent"] = content;
+                jObject["ComputerID"] = UUID;
+                StringContent post = new StringContent(JsonConvert.SerializeObject(jObject), Encoding.UTF8, "application/json");     
+                
+                string resultCheckUpdate = checkUpdate(fileID).Result;
+                if (resultCheckUpdate != "")
+                {
+                    if (resultCheckUpdate == "-1")
+                    {
+                        string temp = "CÓ UPDATE MỚI TRÊN SERVER! Bạn lựa chọn?: \n Yes: Tiếp tục save file local lên server. \n No: Đồng bộ nội dung mới nhất trên server. \n Cancel: Hủy thao tác.";
+                        DialogResult dialogResult = MessageBox.Show(temp, "Information", MessageBoxButtons.YesNoCancel, MessageBoxIcon.Question);
+                        fileSystemWatcher.Changed -= FileSystemWatcher_Changed;
+                        if (dialogResult == DialogResult.Yes)
+                        {
+                            HttpResponseMessage response = client.PostAsync("fp/admin_FileUpdate/uploadcontent", post).Result;
+                            statusCodeUpdate = response.StatusCode.ToString();
+                            if (statusCodeUpdate == "OK")
+                            {
+                                String searchValue = fileID;
+                                int rowIndex = -1;
+                                foreach (DataGridViewRow row in dgvListModules.Rows)
+                                {
+                                    if (row.Cells[1].Value.ToString().Equals(searchValue))
+                                    {
+                                        rowIndex = row.Index;
+                                        break;
+                                    }
+                                }
+                                dgvListModules.Rows[rowIndex].Cells[7].Value = DateTime.Now.ToString();
+                            }
+                            else
+                            {
+                                Debug.Print(statusCodeUpdate);
+                            }
+                            laterEvent.Invoke();
+                        }
+                        if (dialogResult == DialogResult.No)
+                        {
+                            string contentJS = GetContentModuleFileJS(fileID).Result;
+                            string pathFileJS = pathFolder + "\\" + e.Name;
+                            using (StreamWriter sw = File.CreateText(pathFileJS))
+                            {
+                                sw.WriteLine(contentJS);
+                                pathWatching = pathFolder;
+                                String searchValue = fileID;
+                                int rowIndex = -1;
+                                foreach (DataGridViewRow row in dgvListModules.Rows)
+                                {
+                                    if (row.Cells[1].Value.ToString().Equals(searchValue))
+                                    {
+                                        rowIndex = row.Index;
+                                        break;
+                                    }
+                                }
+                                dgvListModules.Rows[rowIndex].Cells[7].Value = DateTime.Now.ToString();
+                            }
+                            laterEvent.Invoke();
+                        }
+                    }
+                    else
+                    {
+                        HttpResponseMessage response = client.PostAsync("fp/admin_FileUpdate/uploadcontent", post).Result;
+                        statusCodeUpdate = response.StatusCode.ToString();
+                        if (statusCodeUpdate == "OK")
+                        {
+                            String searchValue = fileID;
+                            int rowIndex = -1;
+                            foreach (DataGridViewRow row in dgvListModules.Rows)
+                            {
+                                if (row.Cells[1].Value.ToString().Equals(searchValue))
+                                {
+                                    rowIndex = row.Index;
+                                    break;
+                                }
+                            }
+                            dgvListModules.Rows[rowIndex].Cells[7].Value = DateTime.Now.ToString();
+                            Debug.Print("save voi time lon hon");
+                        }
+                        else
+                        {
+                            Debug.Print(statusCodeUpdate);
+                        }
+                    }
+                }
                 //Debug.Print(Path.GetFileNameWithoutExtension(e.Name).Substring(Path.GetFileNameWithoutExtension(e.Name).IndexOf("_") + 1));
                 WriteToFile($"FileSystemWatcher_Changed:  {e.Name} -- {content} -- {DateTime.Now}");
-                PostContent(content, Path.GetFileNameWithoutExtension(e.Name));
+                //PostContent(content, Path.GetFileNameWithoutExtension(e.Name));
+
             }
         }
 
@@ -685,17 +787,17 @@ namespace NFM
             string fileID = "";
             //string moduleID = "";
             string fileName = "";
-            
+
             if (e.ColumnIndex == dgvListModules.Columns["edit_column"].Index && e.RowIndex >= 0)
             {
                 fileID = dgvListModules.Rows[e.RowIndex].Cells[1].Value.ToString();
                 fileName = dgvListModules.Rows[e.RowIndex].Cells[6].Value.ToString();
                 //moduleID = dgvListModules.Rows[e.RowIndex].Cells[3].Value.ToString();
-            }         
+            }
             try
             {
                 string pathFolder = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) + "\\NFM\\FastProject\\";
-                
+
                 if (!Directory.Exists(pathFolder))
                 {
                     Directory.CreateDirectory(pathFolder);
@@ -723,7 +825,7 @@ namespace NFM
                         string contentJS = await GetContentModuleFileJS(fileID);
                         using (StreamWriter sw = File.CreateText(pathFileJS))
                         {
-                            sw.WriteLine(contentJS);                         
+                            sw.WriteLine(contentJS);
                             pathWatching = pathFolder;
                             Watching(pathFolder);
                             OpenVisualCode(pathFolder, fileName + "_" + fileID + ".js");
@@ -739,7 +841,8 @@ namespace NFM
 
         private void FastProjectForm_Resize(object sender, EventArgs e)
         {
-            if (this.WindowState == FormWindowState.Minimized) {
+            if (this.WindowState == FormWindowState.Minimized)
+            {
                 //Hide();
                 systemTray.Visible = true;
                 this.Hide();
@@ -753,8 +856,8 @@ namespace NFM
             }
             if (this.WindowState == FormWindowState.Normal)
             {
-               //Hide();
-                systemTray.Visible = false;               
+                //Hide();
+                systemTray.Visible = false;
             }
         }
 
@@ -772,7 +875,7 @@ namespace NFM
         private void FastProjectForm_Activated(object sender, EventArgs e)
         {
             try
-            {                
+            {
                 //if (cboProjectList.SelectedValue != null)
                 //{
                 //    GetListModule(cboProjectList.SelectedValue.ToString());
@@ -785,10 +888,7 @@ namespace NFM
         }
 
         private void FastProjectForm_Deactivate(object sender, EventArgs e)
-        {            
-            //Debug.Print("Deactive");
-            //await TaskDelay(5000);
-            //checkFormActive = true;
+        {
         }     
     }
 }
