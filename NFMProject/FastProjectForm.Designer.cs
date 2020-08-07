@@ -30,7 +30,7 @@
         {
             this.components = new System.ComponentModel.Container();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FastProjectForm));
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle2 = new System.Windows.Forms.DataGridViewCellStyle();
             this.cboProjectList = new System.Windows.Forms.ComboBox();
             this.systemTray = new System.Windows.Forms.NotifyIcon(this.components);
             this.picState = new System.Windows.Forms.PictureBox();
@@ -38,6 +38,7 @@
             this.label1 = new System.Windows.Forms.Label();
             this.panel2 = new System.Windows.Forms.Panel();
             this.dgvListModules = new System.Windows.Forms.DataGridView();
+            this.button1 = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.picState)).BeginInit();
             this.panel1.SuspendLayout();
             this.panel2.SuspendLayout();
@@ -64,7 +65,7 @@
             // picState
             // 
             this.picState.Image = global::NFMProject.Properties.Resources.check_icon_png_clip_art;
-            this.picState.Location = new System.Drawing.Point(1173, 19);
+            this.picState.Location = new System.Drawing.Point(1186, 19);
             this.picState.Name = "picState";
             this.picState.Size = new System.Drawing.Size(50, 41);
             this.picState.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
@@ -75,13 +76,14 @@
             // panel1
             // 
             this.panel1.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(26)))), ((int)(((byte)(170)))), ((int)(((byte)(237)))));
+            this.panel1.Controls.Add(this.button1);
             this.panel1.Controls.Add(this.label1);
             this.panel1.Controls.Add(this.cboProjectList);
             this.panel1.Controls.Add(this.picState);
             this.panel1.Dock = System.Windows.Forms.DockStyle.Top;
             this.panel1.Location = new System.Drawing.Point(0, 0);
             this.panel1.Name = "panel1";
-            this.panel1.Size = new System.Drawing.Size(1235, 78);
+            this.panel1.Size = new System.Drawing.Size(1248, 78);
             this.panel1.TabIndex = 3;
             // 
             // label1
@@ -100,9 +102,9 @@
             // 
             this.panel2.Controls.Add(this.dgvListModules);
             this.panel2.Dock = System.Windows.Forms.DockStyle.Bottom;
-            this.panel2.Location = new System.Drawing.Point(0, 74);
+            this.panel2.Location = new System.Drawing.Point(0, 75);
             this.panel2.Name = "panel2";
-            this.panel2.Size = new System.Drawing.Size(1235, 567);
+            this.panel2.Size = new System.Drawing.Size(1248, 567);
             this.panel2.TabIndex = 4;
             // 
             // dgvListModules
@@ -111,14 +113,14 @@
             this.dgvListModules.AutoSizeRowsMode = System.Windows.Forms.DataGridViewAutoSizeRowsMode.DisplayedCells;
             this.dgvListModules.BackgroundColor = System.Drawing.SystemColors.Control;
             this.dgvListModules.BorderStyle = System.Windows.Forms.BorderStyle.None;
-            dataGridViewCellStyle1.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle1.BackColor = System.Drawing.SystemColors.Window;
-            dataGridViewCellStyle1.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            dataGridViewCellStyle1.ForeColor = System.Drawing.SystemColors.ControlText;
-            dataGridViewCellStyle1.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-            dataGridViewCellStyle1.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            dataGridViewCellStyle1.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
-            this.dgvListModules.DefaultCellStyle = dataGridViewCellStyle1;
+            dataGridViewCellStyle2.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle2.BackColor = System.Drawing.SystemColors.Window;
+            dataGridViewCellStyle2.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            dataGridViewCellStyle2.ForeColor = System.Drawing.SystemColors.ControlText;
+            dataGridViewCellStyle2.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+            dataGridViewCellStyle2.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle2.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
+            this.dgvListModules.DefaultCellStyle = dataGridViewCellStyle2;
             this.dgvListModules.Dock = System.Windows.Forms.DockStyle.Fill;
             this.dgvListModules.GridColor = System.Drawing.SystemColors.ActiveCaption;
             this.dgvListModules.Location = new System.Drawing.Point(0, 0);
@@ -128,22 +130,31 @@
             this.dgvListModules.RowHeadersVisible = false;
             this.dgvListModules.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.CellSelect;
             this.dgvListModules.ShowEditingIcon = false;
-            this.dgvListModules.Size = new System.Drawing.Size(1235, 567);
+            this.dgvListModules.Size = new System.Drawing.Size(1248, 567);
             this.dgvListModules.TabIndex = 1;
             this.dgvListModules.CellContentClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.dgvListModules_CellContentClick);
+            // 
+            // button1
+            // 
+            this.button1.Location = new System.Drawing.Point(647, 19);
+            this.button1.Name = "button1";
+            this.button1.Size = new System.Drawing.Size(75, 23);
+            this.button1.TabIndex = 4;
+            this.button1.Text = "button1";
+            this.button1.UseVisualStyleBackColor = true;
+            this.button1.Click += new System.EventHandler(this.button1_Click);
             // 
             // FastProjectForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(1235, 641);
+            this.ClientSize = new System.Drawing.Size(1248, 642);
             this.Controls.Add(this.panel2);
             this.Controls.Add(this.panel1);
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Name = "FastProjectForm";
             this.Text = "NFM";
             this.Activated += new System.EventHandler(this.FastProjectForm_Activated);
-            this.Deactivate += new System.EventHandler(this.FastProjectForm_Deactivate);
             this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.FastProjectForm_FormClosed);
             this.Load += new System.EventHandler(this.FastProjectForm_Load);
             this.Resize += new System.EventHandler(this.FastProjectForm_Resize);
@@ -165,5 +176,6 @@
         private System.Windows.Forms.Panel panel2;
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.DataGridView dgvListModules;
+        private System.Windows.Forms.Button button1;
     }
 }

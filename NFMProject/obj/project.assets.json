@@ -1143,11 +1143,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\Hung Mer\\Source\\Repos\\NFMProject\\NFMProject\\NFM.csproj",
+      "projectUniqueName": "C:\\Users\\Hung Mer\\source\\repos\\NFMProject\\NFMProject\\NFM.csproj",
       "projectName": "NFM",
-      "projectPath": "C:\\Users\\Hung Mer\\Source\\Repos\\NFMProject\\NFMProject\\NFM.csproj",
+      "projectPath": "C:\\Users\\Hung Mer\\source\\repos\\NFMProject\\NFMProject\\NFM.csproj",
       "packagesPath": "C:\\Users\\Hung Mer\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\Hung Mer\\Source\\Repos\\NFMProject\\NFMProject\\obj\\",
+      "outputPath": "C:\\Users\\Hung Mer\\source\\repos\\NFMProject\\NFMProject\\obj\\",
       "projectStyle": "PackageReference",
       "skipContentFileWrite": true,
       "configFilePaths": [
@@ -1164,8 +1164,8 @@
       "frameworks": {
         "net472": {
           "projectReferences": {
-            "C:\\Users\\Hung Mer\\Source\\Repos\\NFMProject\\Test\\LoginProject.csproj": {
-              "projectPath": "C:\\Users\\Hung Mer\\Source\\Repos\\NFMProject\\Test\\LoginProject.csproj"
+            "C:\\Users\\Hung Mer\\source\\repos\\NFMProject\\Test\\LoginProject.csproj": {
+              "projectPath": "C:\\Users\\Hung Mer\\source\\repos\\NFMProject\\Test\\LoginProject.csproj"
             }
           }
         }
