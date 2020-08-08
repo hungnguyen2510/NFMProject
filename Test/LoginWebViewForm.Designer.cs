@@ -41,19 +41,20 @@
             // panel2
             // 
             this.panel2.Controls.Add(this.webView1);
-            this.panel2.Location = new System.Drawing.Point(0, 70);
+            this.panel2.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.panel2.Location = new System.Drawing.Point(0, 0);
             this.panel2.Name = "panel2";
-            this.panel2.Size = new System.Drawing.Size(1237, 564);
+            this.panel2.Size = new System.Drawing.Size(1001, 584);
             this.panel2.TabIndex = 8;
             // 
             // webView1
             // 
-            this.webView1.Dock = System.Windows.Forms.DockStyle.Bottom;
+            this.webView1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.webView1.IsScriptNotifyAllowed = true;
             this.webView1.Location = new System.Drawing.Point(0, 0);
             this.webView1.MinimumSize = new System.Drawing.Size(20, 20);
             this.webView1.Name = "webView1";
-            this.webView1.Size = new System.Drawing.Size(1237, 564);
+            this.webView1.Size = new System.Drawing.Size(1001, 584);
             this.webView1.Source = new System.Uri("https://app.lhu.edu.vn/?appmode=win", System.UriKind.Absolute);
             this.webView1.TabIndex = 3;
             this.webView1.ScriptNotify += new System.EventHandler<Microsoft.Toolkit.Win32.UI.Controls.Interop.WinRT.WebViewControlScriptNotifyEventArgs>(this.webView1_ScriptNotify);
@@ -64,7 +65,7 @@
             this.panel1.Dock = System.Windows.Forms.DockStyle.Top;
             this.panel1.Location = new System.Drawing.Point(0, 0);
             this.panel1.Name = "panel1";
-            this.panel1.Size = new System.Drawing.Size(1239, 72);
+            this.panel1.Size = new System.Drawing.Size(1001, 72);
             this.panel1.TabIndex = 9;
             // 
             // label1
@@ -76,7 +77,7 @@
             this.label1.ForeColor = System.Drawing.Color.White;
             this.label1.Location = new System.Drawing.Point(0, 0);
             this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(1239, 72);
+            this.label1.Size = new System.Drawing.Size(1001, 72);
             this.label1.TabIndex = 0;
             this.label1.Text = "ĐĂNG NHẬP";
             this.label1.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
@@ -86,7 +87,7 @@
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.AutoSize = true;
-            this.ClientSize = new System.Drawing.Size(1239, 634);
+            this.ClientSize = new System.Drawing.Size(1001, 584);
             this.Controls.Add(this.panel1);
             this.Controls.Add(this.panel2);
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));

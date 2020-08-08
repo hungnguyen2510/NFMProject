@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\Hung Mer\\source\\repos\\NFMProject\\NFMProject\\NFM.csproj": {}
+    "C:\\Users\\Hung Mer\\Source\\Repos\\NFMProject\\NFMProject\\NFM.csproj": {}
   },
   "projects": {
-    "C:\\Users\\Hung Mer\\source\\repos\\NFMProject\\NFMProject\\NFM.csproj": {
+    "C:\\Users\\Hung Mer\\Source\\Repos\\NFMProject\\NFMProject\\NFM.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\Hung Mer\\source\\repos\\NFMProject\\NFMProject\\NFM.csproj",
+        "projectUniqueName": "C:\\Users\\Hung Mer\\Source\\Repos\\NFMProject\\NFMProject\\NFM.csproj",
         "projectName": "NFM",
-        "projectPath": "C:\\Users\\Hung Mer\\source\\repos\\NFMProject\\NFMProject\\NFM.csproj",
+        "projectPath": "C:\\Users\\Hung Mer\\Source\\Repos\\NFMProject\\NFMProject\\NFM.csproj",
         "packagesPath": "C:\\Users\\Hung Mer\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\Hung Mer\\source\\repos\\NFMProject\\NFMProject\\obj\\",
+        "outputPath": "C:\\Users\\Hung Mer\\Source\\Repos\\NFMProject\\NFMProject\\obj\\",
         "projectStyle": "PackageReference",
         "skipContentFileWrite": true,
         "configFilePaths": [
@@ -28,8 +28,8 @@
         "frameworks": {
           "net472": {
             "projectReferences": {
-              "C:\\Users\\Hung Mer\\source\\repos\\NFMProject\\Test\\LoginProject.csproj": {
-                "projectPath": "C:\\Users\\Hung Mer\\source\\repos\\NFMProject\\Test\\LoginProject.csproj"
+              "C:\\Users\\Hung Mer\\Source\\Repos\\NFMProject\\Test\\LoginProject.csproj": {
+                "projectPath": "C:\\Users\\Hung Mer\\Source\\Repos\\NFMProject\\Test\\LoginProject.csproj"
               }
             }
           }
@@ -70,14 +70,14 @@
         }
       }
     },
-    "C:\\Users\\Hung Mer\\source\\repos\\NFMProject\\Test\\LoginProject.csproj": {
+    "C:\\Users\\Hung Mer\\Source\\Repos\\NFMProject\\Test\\LoginProject.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\Hung Mer\\source\\repos\\NFMProject\\Test\\LoginProject.csproj",
+        "projectUniqueName": "C:\\Users\\Hung Mer\\Source\\Repos\\NFMProject\\Test\\LoginProject.csproj",
         "projectName": "LoginProject",
-        "projectPath": "C:\\Users\\Hung Mer\\source\\repos\\NFMProject\\Test\\LoginProject.csproj",
+        "projectPath": "C:\\Users\\Hung Mer\\Source\\Repos\\NFMProject\\Test\\LoginProject.csproj",
         "packagesPath": "C:\\Users\\Hung Mer\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\Hung Mer\\source\\repos\\NFMProject\\Test\\obj\\",
+        "outputPath": "C:\\Users\\Hung Mer\\Source\\Repos\\NFMProject\\Test\\obj\\",
         "projectStyle": "PackageReference",
         "skipContentFileWrite": true,
         "configFilePaths": [

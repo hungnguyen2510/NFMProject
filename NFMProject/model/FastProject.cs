@@ -28,7 +28,10 @@ namespace NFM.model
         public string ProjectName { get; set; }
         public string ModuleName { get; set; }
         public string FileName { get; set; }
+        public string FileType { get; set; }
         public string UpdateTime { get; set; }
+        public string UpdateUser { get; set; }
+        public string UpdateComputer { get; set; }
     }
 
     public class ListProject

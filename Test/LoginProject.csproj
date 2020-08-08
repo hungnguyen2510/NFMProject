@@ -60,8 +60,6 @@
     <Compile Include="LoginWebViewForm.Designer.cs">
       <DependentUpon>LoginWebViewForm.cs</DependentUpon>
     </Compile>
-    <Compile Include="model\Config.cs" />
-    <Compile Include="model\ItemConfig.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <EmbeddedResource Include="LoginWebViewForm.resx">

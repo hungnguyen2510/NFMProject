@@ -59,15 +59,5 @@ namespace NFMProject.Properties {
                 resourceCulture = value;
             }
         }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
-        /// </summary>
-        internal static System.Drawing.Bitmap check_icon_png_clip_art {
-            get {
-                object obj = ResourceManager.GetObject("check-icon-png-clip-art", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
     }
 }

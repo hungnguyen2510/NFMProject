@@ -99,14 +99,12 @@
     <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="model\Config.cs" />
     <Compile Include="FastProjectForm.cs">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="FastProjectForm.Designer.cs">
       <DependentUpon>FastProjectForm.cs</DependentUpon>
     </Compile>
-    <Compile Include="model\ItemConfig.cs" />
     <Compile Include="model\FastProject.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -165,9 +163,6 @@
     </BootstrapperPackage>
   </ItemGroup>
   <ItemGroup>
-    <None Include="Resources\check-icon-png-clip-art.png" />
-  </ItemGroup>
-  <ItemGroup>
     <ProjectReference Include="..\Test\LoginProject.csproj">
       <Project>{77f5bace-a16c-4a3c-a01f-ebb5bfe15915}</Project>
       <Name>LoginProject</Name>
@@ -175,6 +170,9 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="icons8-sync-64.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Resources\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

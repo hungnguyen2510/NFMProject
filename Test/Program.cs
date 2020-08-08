@@ -11,8 +11,7 @@ namespace LoginProject
     public static class Program
     {
         public static string token = "";
-        public static string pathWatchingConfig = "";
-        public static string pathConfig = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) + "\\NFM\\Config\\";
+        public  static string pathKey = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) + "\\NFM\\Key\\";
         public static JObject ReadFileJSON(string path)
         {
             JObject o1 = JObject.Parse(File.ReadAllText(path));
@@ -33,11 +32,11 @@ namespace LoginProject
         {
             try
             {
-                if (!Directory.Exists(pathConfig))
+                if (!Directory.Exists(pathKey))
                 {
-                    Directory.CreateDirectory(pathConfig);
+                    Directory.CreateDirectory(pathKey);
                 }
-                DirectoryInfo d = new DirectoryInfo(pathConfig);
+                DirectoryInfo d = new DirectoryInfo(pathKey);
                 FileInfo[] Files = d.GetFiles("*.json");
                 string strConfig = "";
                 foreach (FileInfo file in Files)
@@ -49,22 +48,17 @@ namespace LoginProject
                     DialogResult res = MessageBox.Show("Bạn có muốn load config không?", "NFM", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
                     if (res == DialogResult.Yes)
                     {
-                        string pathFile = pathConfig + strConfig;
+                        string pathFile = pathKey + strConfig;
                         JObject ob = ReadFileJSON(pathFile);
-                        Config cf = JsonConvert.DeserializeObject<Config>(ob.ToString());
-                        if (cf.token != "")
-                        {
-                            token = cf.token;
-                            pathWatchingConfig = cf.pathWatching;
-                            MessageBox.Show(token);
-
+                        token = ob["token"].ToString();
+                        if (token != "")
+                        {                         
                             Process process = new Process();
                             string pathNFMProject = Directory.GetCurrentDirectory() + "\\NFMProject.exe";
                             process.StartInfo.FileName = pathNFMProject;
                             process.StartInfo.Verb = "runas";
                             process.StartInfo.UseShellExecute = true;
-                            process.Start();
-                            
+                            process.Start();                          
                         }
                     }
                     else
