@@ -238,9 +238,10 @@ namespace NFM
         }
 
 
-        private async Task<String> GetContentModuleFileJS(string fileID)
+        private async Task<(String,String)> GetContentModuleFileJS(string fileID)
         {
             string contentJS = "";
+            string updateTime = "";
             try
             {
                 HttpClient client = new HttpClient();
@@ -258,10 +259,10 @@ namespace NFM
                     JArray items = (JArray)data["data"];
 
                     contentJS = items[0]["FileContent"].ToString();
-                    Debug.Print(contentJS);
+                    updateTime = items[0]["UpdateTime"].ToString();
                     if (contentJS.Trim() != "")
                     {
-                        return contentJS;
+                        return (contentJS,updateTime);
                     }
                     else
                     {
@@ -278,7 +279,7 @@ namespace NFM
             {
                 MessageBox.Show(ex.Message, "GetContentModuleFileJS", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
-            return contentJS;
+            return (contentJS, updateTime);
 
         }
         private void cboProjectList_SelectedIndexChanged(object sender, EventArgs e)
@@ -458,10 +459,12 @@ namespace NFM
 
                     if (uid == UUID)
                     {
+                        Debug.Print("UUID");
                         result = "uuid";                      
                     }
                     else
                     {
+                        Debug.Print("!UUID");
                         DateTime t1 = Convert.ToDateTime(dgvListModules.Rows[rowIndex].Cells[8].Value.ToString());
                         DateTime t2 = Convert.ToDateTime(updateTime);
                         int compare = DateTime.Compare(t1, t2);
@@ -547,11 +550,13 @@ namespace NFM
                                         dgvListModules.Rows[rowIndex].Cells[8].Value = DateTime.Now.ToString();
                                         dgvListModules.Rows[rowIndex].Cells[10].Value = UUID;
                                         BallonNofity("!UID", "Save file local len server thanh cong");
+                                        Debug.Print("Save file local len server thanh cong - YES - " + "!UID");
                                     }
                                 }
                                 if (dialogResult == DialogResult.No)
                                 {
-                                    string contentJS = await GetContentModuleFileJS(fileID);
+                                    string contentJS =  GetContentModuleFileJS(fileID).Result.Item1;
+                                    string updateTime = GetContentModuleFileJS(fileID).Result.Item2;
                                     if (contentJS.Trim() != "")
                                     {
                                         string pathFileJS = pathFolder + "\\" + e.Name;
@@ -568,37 +573,15 @@ namespace NFM
                                                     break;
                                                 }
                                             }
-                                            dgvListModules.Rows[rowIndex].Cells[8].Value = DateTime.Now.ToString();
+                                            dgvListModules.Rows[rowIndex].Cells[8].Value = updateTime;
                                             dgvListModules.Rows[rowIndex].Cells[10].Value = UUID;
                                         }
                                     }
                                     BallonNofity("!UID", "Dong bo file server ve local thanh cong");
+                                    Debug.Print("Dong bo file server ve local thanh cong - NO - " + "!UID");
                                 }
                             }
-                            else if (resultCheckUpdate == "0") {
-                                string contentJS = await GetContentModuleFileJS(fileID);
-                                if (contentJS.Trim() != "")
-                                {
-                                    string pathFileJS = pathFolder + "\\" + e.Name;
-                                    using (StreamWriter sw = File.CreateText(pathFileJS))
-                                    {
-                                        sw.WriteLine(contentJS);
-                                        String searchValue = fileID;
-                                        int rowIndex = -1;
-                                        foreach (DataGridViewRow row in dgvListModules.Rows)
-                                        {
-                                            if (row.Cells[1].Value.ToString().Equals(searchValue))
-                                            {
-                                                rowIndex = row.Index;
-                                                break;
-                                            }
-                                        }
-                                        dgvListModules.Rows[rowIndex].Cells[8].Value = DateTime.Now.ToString();
-                                        dgvListModules.Rows[rowIndex].Cells[10].Value = UUID;
-                                    }
-                                }
-                                BallonNofity("!UID", "Dong bo file server ve local thanh cong");
-                            }
+                            
                             else //UUID
                             {
                                 HttpResponseMessage response = await client.PostAsync("fp/admin_File/uploadcontent/" + fileID, post);
@@ -615,9 +598,11 @@ namespace NFM
                                             break;
                                         }
                                     }
-                                    dgvListModules.Rows[rowIndex].Cells[8].Value = DateTime.Now.ToString();
+                                    string updateTime = GetContentModuleFileJS(fileID).Result.Item2;
+                                    dgvListModules.Rows[rowIndex].Cells[8].Value = updateTime;
                                     dgvListModules.Rows[rowIndex].Cells[10].Value = UUID;
-                                    BallonNofity("UUID", "Save file local len server thanh cong");
+                                    BallonNofity("UID", "Save file local len server thanh cong");
+                                    Debug.Print("Save file local len server thanh cong - " + "UID");
                                 }
                             }
                         }
@@ -630,7 +615,7 @@ namespace NFM
                 }
             }
             catch (Exception ex) {
-                MessageBox.Show(ex.Message, "FileSystemWatcher_Changed");
+                //MessageBox.Show(ex.Message, "FileSystemWatcher_Changed");
             }
         }
 
@@ -651,7 +636,8 @@ namespace NFM
             try
             {
                 string pathFileJS = pathFolder + "\\" + fileName + "&" + fileID + fileType;
-                string contentJS = await GetContentModuleFileJS(fileID);
+                var res = await GetContentModuleFileJS(fileID);
+                string contentJS = res.Item1;
                 if (!File.Exists(pathFileJS))
                 {
 
@@ -704,6 +690,10 @@ namespace NFM
             Show();
             this.WindowState = FormWindowState.Normal;
             systemTray.Visible = false;
+            if (cboProjectList.SelectedValue != null)
+            {
+                GetListModule(cboProjectList.SelectedValue.ToString());
+            }
         }
 
         private void BallonNofity(string title, string mess) {

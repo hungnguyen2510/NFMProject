@@ -151,7 +151,7 @@
             this.Controls.Add(this.panel1);
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Name = "FastProjectForm";
-            this.Text = "NFM - v1.0";
+            this.Text = "NFM - v1.1";
             this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.FastProjectForm_FormClosed);
             this.Load += new System.EventHandler(this.FastProjectForm_Load);
             this.Resize += new System.EventHandler(this.FastProjectForm_Resize);
